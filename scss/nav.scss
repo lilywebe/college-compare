@@ -1,0 +1,23 @@
+nav{
+    max-width:90%;
+    margin:0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .logo{
+        img{
+            height:100px;
+        }
+    }
+
+    .links{
+        a{
+            text-decoration: none;
+            color:#900C3F;
+            margin-right:20px;
+            font-size: 20px;
+        }
+    }
+    
+}
