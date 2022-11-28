@@ -59,7 +59,7 @@ footer .footer-container .links a {
   width: 80%;
   min-height: 20%;
   margin: 0 auto;
-  margin-top: 120px;
+  padding-top: 120px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -79,6 +79,31 @@ footer .footer-container .links a {
   padding: 5px;
 }
 .login-page .sign-in-side button, .login-page .login-side button {
+  width: 150px;
+  font-size: 15px;
+  margin-left: 135px;
+  background-color: black;
+  color: white;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.profile {
+  width: 80%;
+  min-height: 20%;
+  margin: 0 auto;
+}
+.profile .profile-sections {
+  padding-top: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.profile .profile-sections h3 {
+  font-size: 34px;
+}
+.profile .profile-sections button {
   width: 150px;
   font-size: 15px;
   margin-left: 135px;
