@@ -9,14 +9,17 @@ function changeRoute() {
   let pageID = hashTag.replace("#", "");
   //   console.log(hashTag + ' ' + pageID);
 
-  if (pageID != "") {
-    $.get(`pages/${pageID}.html`, function (data) {
-      console.log("data " + data);
-      $("#app").html(data);
-    });
+  if (pageID == "home" || pageID == "") {
+    MODEL.currentPage("home", initHomeListeners);
+  } else if (pageID == "login") {
+    MODEL.currentPage("login", initAuthListeners);
   } else {
-    MODEL.currentPage("home", initAuthListeners);
+    MODEL.currentPage(pageID);
   }
+}
+
+function getUserInfo() {
+  return MODEL.getUserInfo();
 }
 
 async function initListeners() {
@@ -26,29 +29,31 @@ async function initListeners() {
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
 }
 
+function initHomeListeners() {}
+
 function initAuthListeners() {
-  var register = document.getElementById("register");
-  register.addEventListener("click", registerUser);
-  var signin = document.getElementById("signin");
-  signin.addEventListener("click", signInUser);
-  var signout = document.getElementById("logout");
-  signout.addEventListener("click", signOutUser);
+  // var register = document.getElementById("register");
+  // register.addEventListener("click", registerUser);
+
+  $("#register").on("click", registerUser);
+  $("#signin").on("click", signInUser);
+  //$("#logout").on("click", signOutUser);
 }
 
 async function registerUser() {
-  let em = document.getElementById("email").value;
-  let pw = document.getElementById("pw").value;
+  let em = document.getElementById("s-email").value;
+  let pw = document.getElementById("s-pass").value;
   await MODEL.registerEP(em, pw);
-  document.getElementById("email").value = "";
-  document.getElementById("pw").value = "";
+  document.getElementById("s-email").value = "";
+  document.getElementById("s-pass").value = "";
 }
 
 async function signInUser() {
-  let em = document.getElementById("email").value;
-  let pw = document.getElementById("pw").value;
+  let em = document.getElementById("l-email").value;
+  let pw = document.getElementById("l-pass").value;
   await MODEL.signInEmailPassword(em, pw);
-  document.getElementById("email").value = "";
-  document.getElementById("pw").value = "";
+  document.getElementById("l-email").value = "";
+  document.getElementById("l-pass").value = "";
 }
 
 function signOutUser() {

@@ -55,4 +55,38 @@ footer .footer-container .links a {
   font-size: 20px;
 }
 
+.login-page {
+  width: 80%;
+  min-height: 20%;
+  margin: 0 auto;
+  margin-top: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.login-page .sign-in-side, .login-page .login-side {
+  display: flex;
+  align-items: left;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+.login-page .sign-in-side h3, .login-page .login-side h3 {
+  font-size: 34px;
+}
+.login-page .sign-in-side input, .login-page .login-side input {
+  margin-bottom: 20px;
+  width: 285px;
+  padding: 5px;
+}
+.login-page .sign-in-side button, .login-page .login-side button {
+  width: 150px;
+  font-size: 15px;
+  margin-left: 135px;
+  background-color: black;
+  color: white;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 /*# sourceMappingURL=styles.css.map */

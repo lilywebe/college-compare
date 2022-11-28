@@ -1,0 +1,42 @@
+.login-page{
+    width:80%;
+    min-height:20%;
+    margin:0 auto;
+    margin-top:120px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    
+    
+    
+    .sign-in-side, .login-side{
+        display: flex;
+        align-items: left;
+        justify-content: space-evenly;
+        flex-direction: column;
+        
+
+        h3{
+            font-size:34px;
+            
+        }
+
+        input{
+            margin-bottom:20px;
+            width:285px;
+            padding:5px;
+        }
+
+        button{
+            width:150px;
+            font-size:15px;
+            margin-left:135px;
+            background-color:black;
+            color:white;
+            border:none;
+            padding-top:10px;
+            padding-bottom:10px;
+            
+        }
+    }
+}

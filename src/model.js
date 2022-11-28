@@ -8,6 +8,7 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  getCurrentUser,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -37,14 +38,20 @@ export function currentPage(pageID, callback) {
   if (pageID == "" || pageID == "home") {
     $.get(`pages/home.html`, function (data) {
       $("#app").html(data);
+      callback();
+    });
+  } else {
+    $.get(`pages/${pageID}.html`, function (data) {
+      $("#app").html(data);
+      callback();
     });
   }
-  callback();
 }
 
 const auth = getAuth(firebaseApp);
 
 const db = getFirestore(firebaseApp);
+const user = auth.currentUser;
 
 //const students = collection(db, "Students");
 
@@ -58,6 +65,10 @@ onAuthStateChanged(auth, (user) => {
     console.log("No user");
   }
 });
+
+export function getUserInfo() {
+  return user;
+}
 
 export function signInEmailPassword(em, pw) {
   signInWithEmailAndPassword(auth, em, pw)
