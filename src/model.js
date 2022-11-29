@@ -22,7 +22,10 @@ import {
   onSnapshot,
   query,
   where,
+  writeBatch,
 } from "firebase/firestore";
+
+import { createKeywords, generateKeywords } from "./keywordgenerator";
 
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyDWTiU8sX3higW8JVXfXfEiGfy2qMDK-uM",
@@ -118,3 +121,23 @@ export function signOutBtnFunction() {
       console.log(error.message);
     });
 }
+
+//needs rethought and should not be run until we are certain we have it correct
+// export async function addKeywordstoData() {
+//   const batch = writeBatch(db);
+//   const querySnapshot = await getDocs(collection(db, "colleges"));
+//   querySnapshot.forEach((collegedoc) => {
+//     // doc.data() is never undefined for query doc snapshots
+//     console.log(collegedoc.id, " => ", collegedoc.data());
+//     const data = collegedoc.data();
+//     const name = data.Name;
+//     console.log(name);
+//     let keywords = generateKeywords(name);
+//     const collegeRef = doc(db, "colleges", collegedoc.id);
+
+//     // Set the "capital" field of the city 'DC'
+//     updateDoc(collegeRef, {
+//       keywords: keywords,
+//     });
+//   });
+// }

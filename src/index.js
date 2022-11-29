@@ -2,6 +2,7 @@ import * as MODEL from "./model.js";
 
 $(document).ready(function () {
   initListeners();
+  //MODEL.addKeywordstoData();
 });
 
 function changeRoute() {
