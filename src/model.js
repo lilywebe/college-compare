@@ -81,6 +81,24 @@ export function signInEmailPassword(em, pw) {
     });
 }
 
+//does not work
+export function registerUser(newUser) {
+  createUserWithEmailAndPassword(newUser.email, newUser.password)
+    .then((user) => {
+      // here you can use either the returned user object or       firebase.auth().currentUser. I will use the returned user object
+      if (user) {
+        user
+          .updateProfile({
+            displayName: newUser.name,
+          })
+          .then(console.log("user has display name"));
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
 export function registerEP(em, pw) {
   createUserWithEmailAndPassword(auth, em, pw)
     .then((userCredential) => {

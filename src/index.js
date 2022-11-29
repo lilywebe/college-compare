@@ -43,7 +43,14 @@ function initAuthListeners() {
 async function registerUser() {
   let em = document.getElementById("s-email").value;
   let pw = document.getElementById("s-pass").value;
-  await MODEL.registerEP(em, pw);
+  let name = document.getElementById("s-name").value;
+
+  let user = {
+    name: name,
+    email: em,
+    password: pw,
+  };
+  await MODEL.registerUser(user);
   document.getElementById("s-email").value = "";
   document.getElementById("s-pass").value = "";
 }

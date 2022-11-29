@@ -14,7 +14,8 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 #app {
-  height: 100%;
+  margin-top: 100px;
+  margin-bottom: 100px;
 }
 
 nav {
@@ -32,6 +33,14 @@ nav .links a {
   color: #900C3F;
   margin-right: 20px;
   font-size: 20px;
+}
+
+#login-button {
+  width: 200px;
+  padding: 5px;
+  height: 45px;
+  background-color: #900C3F;
+  color: white;
 }
 
 footer {
@@ -57,12 +66,11 @@ footer .footer-container .links a {
 
 .login-page {
   width: 80%;
-  min-height: 20%;
   margin: 0 auto;
-  padding-top: 120px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  padding-bottom: 100px;
 }
 .login-page .sign-in-side, .login-page .login-side {
   display: flex;
@@ -91,11 +99,10 @@ footer .footer-container .links a {
 
 .profile {
   width: 80%;
-  min-height: 20%;
   margin: 0 auto;
 }
 .profile .profile-sections {
-  padding-top: 120px;
+  padding-bottom: 100px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -112,6 +119,123 @@ footer .footer-container .links a {
   border: none;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+form {
+  color: #555;
+  display: flex;
+  padding: 2px;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  width: 300px;
+  margin: 0 auto;
+}
+form input[type=search] {
+  width: 300px;
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 7px 8px;
+  font-size: 14px;
+  color: inherit;
+  border: 1px solid transparent;
+  border-radius: inherit;
+}
+form input[type=search]::placeholder {
+  color: #bbb;
+}
+form input[type=search]:focus {
+  box-shadow: 0 0 3px 0 #1183d6;
+  border-color: #1183d6;
+  outline: none;
+}
+form button[type=submit] {
+  text-indent: -999px;
+  overflow: hidden;
+  width: 40px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+  cursor: pointer;
+  opacity: 0.7;
+}
+form button[type=submit]::hover {
+  opacity: 1;
+}
+form button[type=submit]:focus {
+  box-shadow: 0 0 3px 0 #1183d6;
+  border-color: #1183d6;
+  outline: none;
+}
+
+.search-section h2 {
+  text-align: center;
+  font-size: 35px;
+  margin-bottom: 25px;
+}
+
+.college-search-page h2 {
+  text-align: center;
+  font-size: 35px;
+  margin-bottom: 25px;
+}
+
+.filter-section {
+  width: 300px;
+  height: 500px;
+}
+
+.search-results-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.search-results-container .colleges-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  width: 900px;
+}
+.search-results-container .colleges-container .college-card {
+  width: 40%;
+}
+
+.colleges-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  max-width: 1100px;
+  height: 500px;
+  margin: 0 auto;
+}
+.colleges-container .college-card {
+  max-width: 400px;
+  height: 400px;
+}
+.colleges-container .college-card img {
+  height: 230px;
+  width: 400px;
+}
+
+.dark-button {
+  width: 126px;
+  height: 30px;
+  text-decoration: none;
+  color: white;
+  background-color: black;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.light-button {
+  width: 126px;
+  height: 30px;
+  text-decoration: none;
+  padding: 5px;
+  color: black;
 }
 
 /*# sourceMappingURL=styles.css.map */
