@@ -2,7 +2,11 @@ import * as MODEL from "./model.js";
 
 $(document).ready(function () {
   initListeners();
+  //MODEL.IU();
+  //getImageFromName();
   //MODEL.addKeywordstoData();
+  //MODEL.addKeywordstoData();
+  //MODEL.removeKeywords();
 });
 
 function changeRoute() {
@@ -30,7 +34,33 @@ async function initListeners() {
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
 }
 
-function initHomeListeners() {}
+async function initHomeListeners() {
+  $("#home-search-form").submit(function (event) {
+    event.preventDefault();
+    let searchParam = $("#home-search").val();
+    MODEL.searchColleges(searchParam);
+  });
+  let homecolleges = await MODEL.getPreSearchColleges();
+  $.each(homecolleges, async (idx, college) => {
+    await getImageFromName(college.Name);
+    $(".colleges-container").append(`<div class="college-card">
+    <img src="../assets/bed.PNG" alt="" />
+    <h3>${college.Name}</h3>
+    <p>
+      Funding Model: ${college.FundingModel}
+    </p>
+    <p>
+      Geography: ${college.Geography}
+    </p>
+    <div class="college-card-buttons">
+      <a class="dark-button" href="#">Add to Favorites</a>
+      <a class="light-button" href="#"
+        >Learn More <i class="fa-solid fa-arrow-right"></i
+      ></a>
+    </div>
+  </div>`);
+  });
+}
 
 function initAuthListeners() {
   // var register = document.getElementById("register");
@@ -68,12 +98,17 @@ function signOutUser() {
   MODEL.signOutBtnFunction();
 }
 
-// function getImageFromName() {
-//   $.get(
-//     "http://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles=Tailor",
-//     function (data) {
-//       $(".result").html(data);
-//       alert("Load was performed.");
-//     }
-//   );
-// }
+function getImageFromName(nameinput) {
+  //url escape the name
+  let schoolname = encodeURIComponent("Indiana University");
+  $.get(
+    `http://en.wikipedia.org/w/api.php?action=query&origin=*&prop=pageimages&format=json&piprop=original&titles=${schoolname}`,
+    function (data) {
+      console.log(data);
+    }
+  );
+}
+
+window.addEventListener("DOMContentLoaded", async (event) => {
+  console.log("DOM fully loaded and parsed");
+});

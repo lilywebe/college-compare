@@ -23,9 +23,10 @@ import {
   query,
   where,
   writeBatch,
+  deleteField,
 } from "firebase/firestore";
 
-import { createKeywords, generateKeywords } from "./keywordgenerator";
+//import { createKeywords, generateKeywords } from "./keywordgenerator";
 
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyDWTiU8sX3higW8JVXfXfEiGfy2qMDK-uM",
@@ -50,6 +51,15 @@ export function currentPage(pageID, callback) {
     });
   }
 }
+// export async function removeKeywords() {
+//   const querySnapshot = await getDocs(collection(db, "colleges"));
+//   querySnapshot.forEach((collegedoc) => {
+//     const collegeRef = doc(db, "colleges", collegedoc.id);
+//     updateDoc(collegeRef, {
+//       keywords: deleteField(),
+//     });
+//   });
+// }
 
 const auth = getAuth(firebaseApp);
 
@@ -68,6 +78,19 @@ onAuthStateChanged(auth, (user) => {
     console.log("No user");
   }
 });
+
+export async function IU() {
+  const collegesRef = collection(db, "colleges");
+  const q = query(
+    collegesRef,
+    where("keywords", "array-contains", "Indiana University")
+  );
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    console.log(doc.id, " => ", doc.data());
+  });
+}
 
 export function getUserInfo() {
   return user;
@@ -102,6 +125,29 @@ export function registerUser(newUser) {
     });
 }
 
+export async function getPreSearchColleges() {
+  let collegesList = [];
+  const collegesRef = collection(db, "colleges");
+
+  const q = query(
+    collegesRef,
+    where("Name", "in", [
+      "Purdue University-Main Campus",
+      "Indiana University-Bloomington",
+      "Indiana University-Purdue University-Indianapolis",
+      "University of Indianapolis",
+    ])
+  );
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    collegesList.push(doc.data());
+    console.log(doc.id, " => ", doc.data());
+  });
+
+  return collegesList;
+}
+
 export function registerEP(em, pw) {
   createUserWithEmailAndPassword(auth, em, pw)
     .then((userCredential) => {
@@ -122,9 +168,19 @@ export function signOutBtnFunction() {
     });
 }
 
-//needs rethought and should not be run until we are certain we have it correct
+// export function generateKeywords(name) {
+//   let keywords = new Set();
+//   for (let begin = 0; begin < name.length; begin++) {
+//     for (let end = begin + 1; end < name.length; end++) {
+//       keywords.add(name.substring(begin, end));
+//     }
+//   }
+//   console.log(keywords);
+//   return [...keywords];
+// }
+
+// //needs rethought and should not be run until we are certain we have it correct
 // export async function addKeywordstoData() {
-//   const batch = writeBatch(db);
 //   const querySnapshot = await getDocs(collection(db, "colleges"));
 //   querySnapshot.forEach((collegedoc) => {
 //     // doc.data() is never undefined for query doc snapshots
@@ -135,9 +191,19 @@ export function signOutBtnFunction() {
 //     let keywords = generateKeywords(name);
 //     const collegeRef = doc(db, "colleges", collegedoc.id);
 
-//     // Set the "capital" field of the city 'DC'
 //     updateDoc(collegeRef, {
 //       keywords: keywords,
 //     });
 //   });
 // }
+
+export async function searchColleges(search) {
+  console.log("made it to search");
+  const collegesRef = collection(db, "colleges");
+  const q = query(collegesRef, where("keywords", "array-contains", search));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    console.log(doc.id, " => ", doc.data());
+  });
+}
