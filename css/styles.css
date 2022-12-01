@@ -188,9 +188,17 @@ form button[type=submit]:focus {
 }
 
 .search-results-container {
+  width: 80%;
+  margin: 0 auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-evenly;
+}
+.search-results-container .filter-section {
+  margin-top: 25px;
+}
+.search-results-container .filter-section h3 {
+  margin-top: 25px;
 }
 .search-results-container .colleges-container {
   display: flex;

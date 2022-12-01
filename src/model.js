@@ -132,7 +132,7 @@ export async function getPreSearchColleges() {
   const q = query(
     collegesRef,
     where("Name", "in", [
-      "Purdue University-Main Campus",
+      "Purdue University",
       "Indiana University-Bloomington",
       "Indiana University-Purdue University-Indianapolis",
       "University of Indianapolis",
@@ -197,13 +197,46 @@ export function signOutBtnFunction() {
 //   });
 // }
 
-export async function searchColleges(search) {
+export async function searchColleges(search, checkboxes, callback) {
   console.log("made it to search");
+  let searchResultsList = [];
   const collegesRef = collection(db, "colleges");
   const q = query(collegesRef, where("keywords", "array-contains", search));
 
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    console.log(doc.id, " => ", doc.data());
+    if (checkboxes.funding.includes(doc.data().FundingModel)) {
+      if (checkboxes.degree.includes(doc.data().HighestDegree)) {
+        let costlevel = "";
+        if (doc.data().AverageCost < 25000) {
+          costlevel = "low";
+        } else if (
+          doc.data().AverageCost >= 25000 &&
+          doc.data().AverageCost <= 45000
+        ) {
+          costlevel = "medium";
+        } else {
+          costlevel = "high";
+        }
+
+        if (checkboxes.cost.includes(costlevel)) {
+          let sat = "";
+          if (doc.data().SATAverage < 1000) {
+            sat = "low";
+          } else if (
+            doc.data().SATAverage >= 1000 &&
+            doc.data().SATAverage <= 1200
+          ) {
+            sat = "medium";
+          } else {
+            sat = "high";
+          }
+          if (checkboxes.sat.includes(sat)) {
+            searchResultsList.push(doc.data());
+          }
+        }
+      }
+    }
   });
+  console.log(searchResultsList);
 }

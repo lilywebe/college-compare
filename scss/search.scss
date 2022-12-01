@@ -76,9 +76,18 @@ button[type="submit"] {
 }
 
 .search-results-container{
+    width:80%;
+    margin: 0 auto;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-evenly;
+
+    .filter-section{
+        margin-top:25px;
+        h3{
+            margin-top:25px;
+        }
+    }
     
     .colleges-container{
         display: flex;

@@ -1,11 +1,36 @@
 <div class="college-search-page">
   <h2>Search for Colleges</h2>
-  <form>
-    <input type="search" placeholder="Search..." />
+  <form id="search-page-form">
+    <input id="search-search" type="search" placeholder="Search..." />
     <button type="submit">Search</button>
   </form>
   <div class="search-results-container">
-    <div class="filter-section"></div>
+    <div class="filter-section">
+      <h3>Funding Model</h3>
+      <input type="checkbox" id="fm1" name="fm1" value="Public" checked />
+      <label for="fm1">Public</label><br />
+      <input type="checkbox" id="fm2" name="fm2" value="Private" checked />
+      <label for="fm2"> Private</label><br />
+      <h3>Highest Degree Available</h3>
+      <input type="checkbox" id="hd1" name="hd1" value="Bachelor's" checked />
+      <label for="hd1"> Bachelor's</label><br />
+      <input type="checkbox" id="hd2" name="hd2" value="Graduate" checked />
+      <label for="hd2"> Graduate</label><br />
+      <h3>Average Cost</h3>
+      <input type="checkbox" id="ac1" name="ac1" value="low" checked />
+      <label for="ac1"> Less than $25,000</label><br />
+      <input type="checkbox" id="ac2" name="ac2" value="medium" checked />
+      <label for="ac2"> Between $25,000 and $45,000</label><br />
+      <input type="checkbox" id="ac3" name="ac3" value="high" checked />
+      <label for="ac3"> Higher than $45,000</label><br />
+      <h3>Average SAT Score</h3>
+      <input type="checkbox" id="sat1" name="sat1" value="low" checked />
+      <label for="sat1"> Less than 1000</label><br />
+      <input type="checkbox" id="sat2" name="sat2" value="medium" checked />
+      <label for="sat2"> Between 1000 and 1200</label><br />
+      <input type="checkbox" id="sat3" name="sat3" value="high" checked />
+      <label for="sat3"> Higher than 1200</label><br />
+    </div>
     <div class="colleges-container">
       <div class="college-card">
         <img src="../assets/bed.PNG" alt="" />
