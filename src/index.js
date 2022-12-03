@@ -2,6 +2,7 @@ import { startAfter } from "firebase/firestore";
 import * as MODEL from "./model.js";
 
 $(document).ready(function () {
+  addNav();
   initListeners();
   //MODEL.IU();
   //getImageFromName();
@@ -14,13 +15,17 @@ function changeRoute() {
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "");
   //   console.log(hashTag + ' ' + pageID);
-
+  addNav();
   if (pageID == "home" || pageID == "") {
     MODEL.currentPage("home", initHomeListeners);
   } else if (pageID == "login") {
     MODEL.currentPage("login", initAuthListeners);
+  } else if (pageID == "logout") {
+    MODEL.currentPage("logout", initAuthListeners);
   } else if (pageID == "allcolleges") {
     MODEL.currentPage("allcolleges", initSearchPage);
+  } else if (pageID.includes("_")) {
+    MODEL.currentPage(pageID, initIndCollegePage);
   } else {
     MODEL.currentPage(pageID);
   }
@@ -28,6 +33,35 @@ function changeRoute() {
 
 function getUserInfo() {
   return MODEL.getUserInfo();
+}
+async function addNav() {
+  let user = getUserInfo();
+
+  if (user) {
+    $("nav").html(`<div class="logo">
+    <a href="#home"><img src="assets/logo.png" alt="" /></a>
+  </div>
+  <div class="links">
+    <a href="#allcolleges">Search Colleges</a>
+    <a href="#comparecolleges">Compare Colleges</a>
+    <a href="#favorites">My Colleges</a>
+    <a href="#profile">My Profile</a>
+    <a id="logout-button" href="#logout">Logout</a>
+  </div>`);
+  } else {
+    $("nav").html(` 
+    <div class="logo">
+      <a href="#home"><img src="assets/logo.png" alt="" /></a>
+    </div>
+    <div class="links">
+      <a href="#allcolleges">Search Colleges</a>
+      <a href="#comparecolleges">Compare Colleges</a>
+      <a href="#favorites">My Colleges</a>
+      <a href="#profile">My Profile</a>
+      <a id="login-button" href="#login">Login</a>
+    </div>
+  `);
+  }
 }
 
 async function initListeners() {
@@ -109,7 +143,86 @@ function getFilterValues() {
   return checkObj;
 }
 
-async function displaySearchResults() {}
+async function initIndCollegePage(collegeid) {
+  let college = await MODEL.getSingleCollege(collegeid);
+  let image = await getImageFromName(college.Name);
+  $(".ind-college-page").html(`
+  <div class="image-name-side">
+    <div class="name-button">
+      <h2>${college.Name}</h2>
+      <a href="#"><i class="fa-regular fa-heart"></i></a>
+    </div>
+    <img src="${image}" alt="">
+  </div>
+  <div class="college-info-side">
+    <div class="admission">
+      <h3>Admission Rate:</h3>
+      <p>${college.AdmissionRate}</p>
+    </div>
+    <div class="funding">
+      <h3>Funding Model:</h3>
+      <p>${college.FundingModel}</p>
+    </div>
+    <div class="geography">
+      <h3>Geography:</h3>
+      <p>${college.Geography}</p>
+    </div>
+    <div class="region">
+      <h3>Region:</h3>
+      <p>${college.Region}</p>
+    </div>
+    <div class="predegree">
+      <h3>Predominant Degree:</h3>
+      <p>${college.PredominantDegree}</p>
+    </div>
+    <div class="highdegree">
+      <h3>Highest Degree Offered:</h3>
+      <p>${college.HighestDegree}</p>
+    </div>
+    <div class="avgcost">
+      <h3>Average Cost:</h3>
+      <p>${college.AverageCost}</p>
+    </div>
+    <div class="avgsat">
+      <h3>Average SAT:</h3>
+      <p>${college.SATAverage}</p>
+    </div>
+    <div class="avgact">
+      <h3>Median ACT:</h3>
+      <p>${college.ACTMedian}</p>
+    </div>
+  </div>`);
+}
+
+function initSearchListeners() {}
+
+async function displaySearchResults(searchResults) {
+  $(".colleges-container").html("");
+  $.each(searchResults, async (idx, college) => {
+    let collegedata = college.data();
+    let collegeid = college.id;
+    let image = await getImageFromName(collegedata.Name);
+    $(".colleges-container").append(`<div class="college-card">
+    <img src="${image}" alt="" />
+    <h3>${collegedata.Name}</h3>
+    <p>
+      Funding Model: ${collegedata.FundingModel}
+    </p>
+    <p>
+      Geography: ${collegedata.Geography}
+    </p>
+    <div class="college-card-buttons">
+      <a class="dark-button" href="#">Add to Favorites</a>
+      <a class="light-button" href="#indcollege_${collegeid}"
+        >Learn More <i class="fa-solid fa-arrow-right"></i
+      ></a>
+    </div>
+  </div>`);
+  });
+}
+function routeToHome() {
+  window.location.hash = "#home";
+}
 
 async function initSearchPage() {
   $("#search-page-form").submit(function (event) {
@@ -144,9 +257,18 @@ function initAuthListeners() {
   // var register = document.getElementById("register");
   // register.addEventListener("click", registerUser);
 
-  $("#register").on("click", registerUser);
-  $("#signin").on("click", signInUser);
-  //$("#logout").on("click", signOutUser);
+  $("#register").on("click", async () => {
+    await registerUser();
+    routeToHome();
+  });
+  $("#signin").on("click", async () => {
+    await signInUser();
+    routeToHome();
+  });
+  $("#logout").on("click", async () => {
+    await signOutUser();
+    routeToHome();
+  });
 }
 
 async function registerUser() {
@@ -159,7 +281,7 @@ async function registerUser() {
     email: em,
     password: pw,
   };
-  await MODEL.registerUser(user);
+  await MODEL.registerEP(user);
   document.getElementById("s-email").value = "";
   document.getElementById("s-pass").value = "";
 }
@@ -176,25 +298,66 @@ function signOutUser() {
   MODEL.signOutBtnFunction();
 }
 
+//src stackoverflow lol
+function getHashFromString(text) {
+  var hash = 0,
+    i,
+    chr;
+  if (text.length === 0) return hash;
+  for (i = 0; i < text.length; i++) {
+    chr = text.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  hash = Math.abs(hash);
+  return hash.toString(16);
+}
+
 async function getImageFromName(nameinput) {
   //url escape the name
 
   //https://en.wikipedia.org/w/api.php?origin=*&action=parse&page=Indiana+University-Bloomington&prop=text&formatversion=2&redirects=1&format=json
   let schoolname = encodeURIComponent(nameinput);
+  let schoolhash = getHashFromString(schoolname);
+  let gravatar = `https://www.gravatar.com/avatar/${schoolhash}?d=identicon`;
   let data = await $.get(
     `https://en.wikipedia.org/w/api.php?origin=*&action=parse&page=${schoolname}&prop=text&formatversion=2&redirects=1&format=json`
   ).promise();
-  let images = [
-    ...data.parse.text.matchAll(/<img alt="[^"]*" src="([^"]*)" [^>]*>/g),
-  ];
-  if (images.length == 0) {
-    return false;
-  } else if (images.length == 1) {
-    return images[0][1];
-  } else if (images.length == 2) {
-    return images[1][1];
+  if (data && data.parse && data.parse.text) {
+    let rawimages = [
+      ...data.parse.text.matchAll(/<img alt="[^"]*" src="([^"]*)" [^>]*>/g),
+    ];
+    let images = [];
+    $.each(rawimages, (idx, raw) => {
+      if (
+        raw[1].includes("UI_icon") ||
+        raw[1].includes("Edit-clear") ||
+        raw[1].includes("Question_book") ||
+        raw[1].includes("Disambig") ||
+        raw[1].includes("Commons-logo.svg") ||
+        raw[1].includes("Wiki_logo") ||
+        raw[1].includes("Loudspeaker") ||
+        raw[1].includes("Red_pog") ||
+        raw[1].includes("Diploma_icon") ||
+        raw[1].includes("Unbalanced_scales") ||
+        raw[1].includes("Ambox_") ||
+        raw[1].includes("Wiki_letter")
+      ) {
+      } else {
+        images.push(raw[1]);
+      }
+    });
+    if (images.length == 0) {
+      return gravatar;
+    } else if (images.length == 1) {
+      return images[0];
+    } else if (images.length == 2) {
+      return images[1];
+    } else {
+      return images[2];
+    }
   } else {
-    return images[2][1];
+    return gravatar;
   }
 }
 

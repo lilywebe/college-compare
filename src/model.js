@@ -9,6 +9,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   getCurrentUser,
+  updateProfile,
+  userCredential,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -24,6 +26,7 @@ import {
   where,
   writeBatch,
   deleteField,
+  limit,
 } from "firebase/firestore";
 
 //import { createKeywords, generateKeywords } from "./keywordgenerator";
@@ -39,10 +42,18 @@ const firebaseApp = initializeApp({
 });
 
 export function currentPage(pageID, callback) {
+  console.log(pageID);
   if (pageID == "" || pageID == "home") {
     $.get(`pages/home.html`, function (data) {
       $("#app").html(data);
       callback();
+    });
+  } else if (pageID.includes("_")) {
+    let collegeid = pageID.substring(pageID.indexOf("_") + 1);
+    let pageName = pageID.substring(0, pageID.indexOf("_"));
+    $.get(`pages/${pageName}.html`, function (data) {
+      $("#app").html(data);
+      callback(collegeid);
     });
   } else {
     $.get(`pages/${pageID}.html`, function (data) {
@@ -72,7 +83,7 @@ const user = auth.currentUser;
 
 // detect auth state
 onAuthStateChanged(auth, (user) => {
-  if (user != null) {
+  if (user) {
     console.log("logged in");
   } else {
     console.log("No user");
@@ -93,7 +104,7 @@ export async function IU() {
 }
 
 export function getUserInfo() {
-  return user;
+  return auth.currentUser;
 }
 
 export function signInEmailPassword(em, pw) {
@@ -148,10 +159,20 @@ export async function getPreSearchColleges() {
   return collegesList;
 }
 
-export function registerEP(em, pw) {
-  createUserWithEmailAndPassword(auth, em, pw)
+export async function registerEP(userObj) {
+  await createUserWithEmailAndPassword(auth, userObj.email, userObj.password)
     .then((userCredential) => {
       const user = userCredential.user;
+      console.log(user);
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+  await updateProfile(auth.currentUser, {
+    displayName: userObj.name,
+  })
+    .then(() => {
+      const user = auth.currentUser;
       console.log(user);
     })
     .catch((error) => {
@@ -201,7 +222,11 @@ export async function searchColleges(search, checkboxes, callback) {
   console.log("made it to search");
   let searchResultsList = [];
   const collegesRef = collection(db, "colleges");
-  const q = query(collegesRef, where("keywords", "array-contains", search));
+  const q = query(
+    collegesRef,
+    where("keywords", "array-contains", search),
+    limit(50)
+  );
 
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
@@ -232,11 +257,41 @@ export async function searchColleges(search, checkboxes, callback) {
             sat = "high";
           }
           if (checkboxes.sat.includes(sat)) {
-            searchResultsList.push(doc.data());
+            searchResultsList.push(doc);
           }
         }
       }
     }
   });
+
   console.log(searchResultsList);
+  callback(searchResultsList);
+}
+
+export async function addToFavorites(collegeid) {
+  const user = auth.currentUser;
+  if (user) {
+    const docRef = await addDoc(collection(db, "favorites"), {
+      user: user.uid,
+      college: collegeid,
+    });
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export async function getSingleCollege(collegeid) {
+  console.log(collegeid);
+  const docRef = doc(db, "colleges", collegeid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    console.log("Document data:", docSnap.data());
+    console.log(docSnap);
+    return docSnap.data();
+  } else {
+    // doc.data() will be undefined in this case
+    console.log("No such document!");
+  }
 }
