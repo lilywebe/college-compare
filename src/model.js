@@ -259,7 +259,7 @@ export async function searchColleges(search, checkboxes, callback) {
   );
 
   const querySnapshot = await getDocs(q);
-  if (checkboxes) {
+  if (checkboxes && checkboxes !== "left" && checkboxes !== "right") {
     querySnapshot.forEach((doc) => {
       if (checkboxes.funding.includes(doc.data().FundingModel)) {
         if (checkboxes.degree.includes(doc.data().HighestDegree)) {
@@ -301,7 +301,7 @@ export async function searchColleges(search, checkboxes, callback) {
   }
 
   console.log(searchResultsList);
-  callback(searchResultsList);
+  callback(searchResultsList, checkboxes);
 }
 
 export async function addToFavorites(collegeid) {

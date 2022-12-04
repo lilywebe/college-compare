@@ -85,18 +85,63 @@ async function initCompareColleges() {
       event.preventDefault();
     }
     let searchParam = $("#left-search").val();
-    MODEL.searchColleges(searchParam, null, displayCompareResults);
+    MODEL.searchColleges(searchParam, "left", displayCompareResults);
   });
   $("#right-compare-form").submit((event) => {
     if (event) {
       event.preventDefault();
     }
     let searchParam = $("#right-search").val();
-    MODEL.searchColleges(searchParam, null, displayCompareResults);
+    MODEL.searchColleges(searchParam, "right", displayCompareResults);
   });
 }
 
-async function displayCompareResults() {}
+async function displayCompareResults(searchResults, sideOfPage) {
+  console.log(sideOfPage);
+  if (sideOfPage == "right") {
+    $("#right-names").html(
+      `<option value="none" selected disabled hidden>Select an Option</option>`
+    );
+    $.each(searchResults, (idx, result) => {
+      $("#right-names").append(
+        `<option value="${result.id}">${result.data().Name}</option>`
+      );
+    });
+  } else {
+    $("#left-names").html(
+      `<option value="none" selected disabled hidden>Select an Option</option>`
+    );
+
+    $.each(searchResults, (idx, result) => {
+      $("#left-names").append(
+        `<option value="${result.id}">${result.data().Name}</option>`
+      );
+    });
+  }
+  $("#left-names").on("change", async function (e) {
+    let college = await MODEL.getSingleCollege(this.value);
+    displayCompareColleges(college, "left");
+  });
+  $("#right-names").on("change", async function (e) {
+    let college = await MODEL.getSingleCollege(this.value);
+    displayCompareColleges(college, "right");
+  });
+}
+
+async function displayCompareColleges(college, sideOfPage) {
+  $(`#${sideOfPage}-name-fav`)
+    .html(`<h3 id="${sideOfPage}-side-name">${college.Name}</h3>
+  <a href="#"><i class="fa-regular fa-heart"></i></a>`);
+  $(`#adr-${sideOfPage}`).html(college.AdmissionRate);
+  $(`#fm-${sideOfPage}`).html(college.FundingModel);
+  $(`#geo-${sideOfPage}`).html(college.Geography);
+  $(`#reg-${sideOfPage}`).html(college.Region);
+  $(`#pre-${sideOfPage}`).html(college.PredominantDegree);
+  $(`#high-${sideOfPage}`).html(college.HighestDegree);
+  $(`#cost-${sideOfPage}`).html(college.AverageCost);
+  $(`#sat-${sideOfPage}`).html(college.SATAverage);
+  $(`#act-${sideOfPage}`).html(college.ACTMedian);
+}
 
 async function initProfilePage() {
   let user = getUserInfo();
@@ -245,7 +290,7 @@ async function initIndCollegePage(collegeid) {
 
 function initSearchListeners() {}
 
-async function displaySearchResults(searchResults) {
+async function displaySearchResults(searchResults, checkboxes) {
   $(".colleges-container").html("");
   $.each(searchResults, async (idx, college) => {
     let collegedata = college.data();

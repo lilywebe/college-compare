@@ -249,4 +249,59 @@ form button[type=submit]:focus {
   color: black;
 }
 
+.college-results-section {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 100px;
+}
+.college-results-section .college-compare-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.college-results-section .college-compare-info #left-name-fav, .college-results-section .college-compare-info #right-name-fav {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 75px;
+  width: 250px;
+}
+.college-results-section .college-compare-info #left-name-fav a, .college-results-section .college-compare-info #right-name-fav a {
+  padding-bottom: 30px;
+  font-size: 20px;
+}
+.college-results-section h3 {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.college-results-section hr {
+  width: 50%;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+.college-results-section p {
+  text-align: center;
+  font-weight: bold;
+}
+
+.search-bar-section {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.search-bar-section .left-search, .search-bar-section .right-search {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.compare-colleges-page h1 {
+  text-align: center;
+  margin-bottom: 100px;
+}
+
 /*# sourceMappingURL=styles.css.map */
