@@ -355,16 +355,18 @@ export async function getUserFavorites() {
   return false;
 }
 
-export async function removeFromFavorites(collegeid) {
+export async function removeFromFavorites(collegeid, callback) {
   const user = auth.currentUser;
-  var q = db
-    .collection("favorites")
-    .where("college", "==", collegeid)
-    .where("user", "==", user.uid);
-  q.get().then(function (querySnapshot) {
-    querySnapshot.forEach(function (doc) {
-      doc.ref.delete();
-    });
+  const myCollection = collection(db, "favorites");
+  const mycollectionQuery = query(
+    myCollection,
+    where("user", "==", user.uid),
+    where("college", "==", collegeid)
+  );
+  const myCollectionSnapshot = await getDocs(mycollectionQuery);
+  myCollectionSnapshot.forEach(async (doc) => {
+    await deleteDoc(doc.ref);
+    callback();
   });
 }
 

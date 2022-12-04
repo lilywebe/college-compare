@@ -83,7 +83,7 @@ async function initListeners() {
 
 async function initFavoritesPage() {
   let colleges = await MODEL.getUserFavorites();
-
+  $(".colleges-container").html("");
   console.log(colleges);
   console.log(colleges.length);
   $.each(colleges, async (idx, college) => {
@@ -110,20 +110,20 @@ async function initFavoritesPage() {
     </div>
   </div>`);
     $(`#remove-fav-${collegeid}`).on("click", async () => {
-      let success = await MODEL.removeFromFavorites(collegeid);
-      if (success) {
-        Swal.fire(
-          "Nice!",
-          `You added ${collegedata.Name} to your favorites! `,
-          "success"
-        );
-      } else {
-        Swal.fire(
-          "Oops!",
-          `You need to be signed in to add ${collegedata.Name} to your favorites! `,
-          "error"
-        );
-      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          MODEL.removeFromFavorites(collegeid, initFavoritesPage);
+          Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        }
+      });
     });
   });
 }
