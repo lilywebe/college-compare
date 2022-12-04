@@ -11,6 +11,10 @@ import {
   getCurrentUser,
   updateProfile,
   userCredential,
+  updateEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -46,10 +50,12 @@ export function currentPage(pageID, callback) {
   if (pageID == "" || pageID == "home") {
     $.get(`pages/home.html`, function (data) {
       $("#app").html(data);
-      callback();
+      callback("");
     });
   } else if (pageID.includes("_")) {
-    let collegeid = pageID.substring(pageID.indexOf("_") + 1);
+    let collegeid = decodeURIComponent(
+      pageID.substring(pageID.indexOf("_") + 1)
+    );
     let pageName = pageID.substring(0, pageID.indexOf("_"));
     $.get(`pages/${pageName}.html`, function (data) {
       $("#app").html(data);
@@ -58,7 +64,7 @@ export function currentPage(pageID, callback) {
   } else {
     $.get(`pages/${pageID}.html`, function (data) {
       $("#app").html(data);
-      callback();
+      callback("");
     });
   }
 }
@@ -89,6 +95,27 @@ onAuthStateChanged(auth, (user) => {
     console.log("No user");
   }
 });
+
+export async function updateUserInfo(userObj, oldPass) {
+  const auth = getAuth();
+  const credential = EmailAuthProvider.credential(
+    auth.currentUser.email,
+    oldPass
+  );
+  const result = await reauthenticateWithCredential(
+    auth.currentUser,
+    credential
+  );
+  console.log(result);
+
+  updateProfile(auth.currentUser, {
+    displayName: userObj.name,
+  });
+
+  updateEmail(auth.currentUser, userObj.email);
+
+  updatePassword(auth.currentUser, userObj.password);
+}
 
 export async function IU() {
   const collegesRef = collection(db, "colleges");
@@ -152,7 +179,10 @@ export async function getPreSearchColleges() {
 
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    collegesList.push(doc.data());
+    collegesList.push({
+      collegeid: doc.id,
+      collegedata: doc.data(),
+    });
     console.log(doc.id, " => ", doc.data());
   });
 

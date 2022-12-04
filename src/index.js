@@ -24,10 +24,14 @@ function changeRoute() {
     MODEL.currentPage("logout", initAuthListeners);
   } else if (pageID == "allcolleges") {
     MODEL.currentPage("allcolleges", initSearchPage);
-  } else if (pageID.includes("_")) {
+  } else if (pageID.includes("indcollege_")) {
     MODEL.currentPage(pageID, initIndCollegePage);
+  } else if (pageID.includes("allcolleges_")) {
+    MODEL.currentPage(pageID, initSearchPage);
+  } else if (pageID.includes("editaccount")) {
+    MODEL.currentPage(pageID, initEditAccount);
   } else {
-    MODEL.currentPage(pageID);
+    MODEL.currentPage(pageID, () => {});
   }
 }
 
@@ -71,32 +75,40 @@ async function initListeners() {
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
 }
 
+async function handleHometoSearch(searchParam) {
+  let newSearchParam = encodeURIComponent(searchParam);
+  routeTo(`allcolleges_${newSearchParam}`);
+}
+
 async function initHomeListeners() {
-  // $("#home-search-form").submit(function (event) {
-  //   event.preventDefault();
-  //   let searchParam = $("#home-search").val();
-  //   MODEL.searchColleges(searchParam);
-  // });
-  // let homecolleges = await MODEL.getPreSearchColleges();
-  // $.each(homecolleges, async (idx, college) => {
-  //   let image = await getImageFromName(college.Name);
-  //   $(".colleges-container").append(`<div class="college-card">
-  //   <img src="${image}" alt="" />
-  //   <h3>${college.Name}</h3>
-  //   <p>
-  //     Funding Model: ${college.FundingModel}
-  //   </p>
-  //   <p>
-  //     Geography: ${college.Geography}
-  //   </p>
-  //   <div class="college-card-buttons">
-  //     <a class="dark-button" href="#">Add to Favorites</a>
-  //     <a class="light-button" href="#"
-  //       >Learn More <i class="fa-solid fa-arrow-right"></i
-  //     ></a>
-  //   </div>
-  // </div>`);
-  // });
+  $("#home-search-form").submit(function (event) {
+    event.preventDefault();
+    let searchParam = $("#home-search").val();
+
+    handleHometoSearch(searchParam);
+  });
+  let homecolleges = await MODEL.getPreSearchColleges();
+  $.each(homecolleges, async (idx, college) => {
+    let collegeid = college.collegeid;
+    let collegedata = college.collegedata;
+    let image = await getImageFromName(collegedata.Name);
+    $(".colleges-container").append(`<div class="college-card">
+    <img src="${image}" alt="" />
+    <h3>${collegedata.Name}</h3>
+    <p>
+      Funding Model: ${collegedata.FundingModel}
+    </p>
+    <p>
+      Geography: ${collegedata.Geography}
+    </p>
+    <div class="college-card-buttons">
+      <a class="dark-button" href="#">Add to Favorites</a>
+      <a class="light-button" href="#indcollege_${collegeid}"
+        >Learn More <i class="fa-solid fa-arrow-right"></i
+      ></a>
+    </div>
+  </div>`);
+  });
 }
 
 function getFilterValues() {
@@ -220,37 +232,90 @@ async function displaySearchResults(searchResults) {
   </div>`);
   });
 }
-function routeToHome() {
-  window.location.hash = "#home";
+function routeTo(routeloc) {
+  window.location.hash = `#${routeloc}`;
 }
 
-async function initSearchPage() {
-  $("#search-page-form").submit(function (event) {
-    event.preventDefault();
+async function initSearchPage(searchTerm) {
+  let searchFunc = function (event) {
+    if (event) {
+      event.preventDefault();
+    }
     let checkboxes = getFilterValues();
     let searchParam = $("#search-search").val();
     MODEL.searchColleges(searchParam, checkboxes, displaySearchResults);
-  });
-  let presearchcolleges = await MODEL.getPreSearchColleges();
-  $.each(presearchcolleges, async (idx, college) => {
-    let image = await getImageFromName(college.Name);
-    $(".colleges-container").append(`<div class="college-card">
+  };
+  $("#search-page-form").submit(searchFunc);
+
+  if (searchTerm !== "") {
+    $("#search-search").val(searchTerm);
+    searchFunc();
+  } else {
+    let presearchcolleges = await MODEL.getPreSearchColleges();
+    $.each(presearchcolleges, async (idx, college) => {
+      let collegeid = college.collegeid;
+      let collegedata = college.collegedata;
+      let image = await getImageFromName(collegedata.Name);
+      $(".colleges-container").append(`<div class="college-card">
     <img src="${image}" alt="" />
-    <h3>${college.Name}</h3>
+    <h3>${collegedata.Name}</h3>
     <p>
-      Funding Model: ${college.FundingModel}
+      Funding Model: ${collegedata.FundingModel}
     </p>
     <p>
-      Geography: ${college.Geography}
+      Geography: ${collegedata.Geography}
     </p>
     <div class="college-card-buttons">
       <a class="dark-button" href="#">Add to Favorites</a>
-      <a class="light-button" href="#"
+      <a class="light-button" href="#indcollege_${collegeid}"
         >Learn More <i class="fa-solid fa-arrow-right"></i
       ></a>
     </div>
   </div>`);
+    });
+  }
+}
+
+async function initEditAccount() {
+  let currentuser = getUserInfo();
+  let userObj = {
+    name: "",
+    email: "",
+    password: "",
+  };
+
+  const { value: password } = await Swal.fire({
+    title: "Enter your password",
+    input: "password",
+    inputLabel: "Password",
+    inputPlaceholder: "Enter your password",
+    inputAttributes: {
+      maxlength: 30,
+      autocapitalize: "off",
+      autocorrect: "off",
+    },
   });
+
+  if (password) {
+    console.log(password);
+
+    $(".sign-in-side")
+      .append(`<input id="s-name" type="text" value="${currentuser.displayName}" />
+  <input id="s-email" type="text" value="${currentuser.email}" />
+  <input id="s-pass" type="password" value="${password}" />
+  <button id="saveedits">apply changes</button>`);
+
+    $("#saveedits").on("click", async () => {
+      userObj.name = $("#s-name").val();
+      userObj.email = $("#s-email").val();
+      userObj.password = $("#s-pass").val();
+
+      console.log(userObj);
+
+      await MODEL.updateUserInfo(userObj, password);
+      routeTo("profile");
+    });
+  }
 }
 
 function initAuthListeners() {
@@ -259,15 +324,15 @@ function initAuthListeners() {
 
   $("#register").on("click", async () => {
     await registerUser();
-    routeToHome();
+    routeTo("home");
   });
   $("#signin").on("click", async () => {
     await signInUser();
-    routeToHome();
+    routeTo("home");
   });
   $("#logout").on("click", async () => {
     await signOutUser();
-    routeToHome();
+    routeTo("home");
   });
 }
 
