@@ -30,6 +30,10 @@ function changeRoute() {
     MODEL.currentPage(pageID, initSearchPage);
   } else if (pageID.includes("editaccount")) {
     MODEL.currentPage(pageID, initEditAccount);
+  } else if (pageID.includes("profile")) {
+    MODEL.currentPage(pageID, initProfilePage);
+  } else if (pageID.includes("comparecolleges")) {
+    MODEL.currentPage(pageID, initCompareColleges);
   } else {
     MODEL.currentPage(pageID, () => {});
   }
@@ -73,6 +77,39 @@ async function initListeners() {
   changeRoute();
   //var signOutBtn = document.getElementById("signOut");
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
+}
+
+async function initCompareColleges() {
+  $("#left-compare-form").submit((event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    let searchParam = $("#left-search").val();
+    MODEL.searchColleges(searchParam, null, displayCompareResults);
+  });
+  $("#right-compare-form").submit((event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    let searchParam = $("#right-search").val();
+    MODEL.searchColleges(searchParam, null, displayCompareResults);
+  });
+}
+
+async function displayCompareResults() {}
+
+async function initProfilePage() {
+  let user = getUserInfo();
+  $(".account-info").append(`<div class="name">
+  <h3>Display Name:</h3>
+  <p>${user.displayName}</p>
+</div>
+<div class="Email">
+  <h3>Email</h3>
+  <p>${user.email}</p>
+</div>
+  <a href="#editaccount">edit account info</a>
+  `);
 }
 
 async function handleHometoSearch(searchParam) {

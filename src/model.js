@@ -259,40 +259,46 @@ export async function searchColleges(search, checkboxes, callback) {
   );
 
   const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    if (checkboxes.funding.includes(doc.data().FundingModel)) {
-      if (checkboxes.degree.includes(doc.data().HighestDegree)) {
-        let costlevel = "";
-        if (doc.data().AverageCost < 25000) {
-          costlevel = "low";
-        } else if (
-          doc.data().AverageCost >= 25000 &&
-          doc.data().AverageCost <= 45000
-        ) {
-          costlevel = "medium";
-        } else {
-          costlevel = "high";
-        }
-
-        if (checkboxes.cost.includes(costlevel)) {
-          let sat = "";
-          if (doc.data().SATAverage < 1000) {
-            sat = "low";
+  if (checkboxes) {
+    querySnapshot.forEach((doc) => {
+      if (checkboxes.funding.includes(doc.data().FundingModel)) {
+        if (checkboxes.degree.includes(doc.data().HighestDegree)) {
+          let costlevel = "";
+          if (doc.data().AverageCost < 25000) {
+            costlevel = "low";
           } else if (
-            doc.data().SATAverage >= 1000 &&
-            doc.data().SATAverage <= 1200
+            doc.data().AverageCost >= 25000 &&
+            doc.data().AverageCost <= 45000
           ) {
-            sat = "medium";
+            costlevel = "medium";
           } else {
-            sat = "high";
+            costlevel = "high";
           }
-          if (checkboxes.sat.includes(sat)) {
-            searchResultsList.push(doc);
+
+          if (checkboxes.cost.includes(costlevel)) {
+            let sat = "";
+            if (doc.data().SATAverage < 1000) {
+              sat = "low";
+            } else if (
+              doc.data().SATAverage >= 1000 &&
+              doc.data().SATAverage <= 1200
+            ) {
+              sat = "medium";
+            } else {
+              sat = "high";
+            }
+            if (checkboxes.sat.includes(sat)) {
+              searchResultsList.push(doc);
+            }
           }
         }
       }
-    }
-  });
+    });
+  } else {
+    querySnapshot.forEach((doc) => {
+      searchResultsList.push(doc);
+    });
+  }
 
   console.log(searchResultsList);
   callback(searchResultsList);
@@ -325,3 +331,10 @@ export async function getSingleCollege(collegeid) {
     console.log("No such document!");
   }
 }
+
+// export async function getAllColleges() {
+//   const snapshot = await firebase.firestore().collection("colleges").get();
+//   return snapshot.docs.map((doc) => {
+//     return { docid: doc.id, docdata: doc.data() };
+//   });
+// }
