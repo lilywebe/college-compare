@@ -34,6 +34,8 @@ function changeRoute() {
     MODEL.currentPage(pageID, initProfilePage);
   } else if (pageID.includes("comparecolleges")) {
     MODEL.currentPage(pageID, initCompareColleges);
+  } else if (pageID.includes("favorites")) {
+    MODEL.currentPage(pageID, initFavoritesPage);
   } else {
     MODEL.currentPage(pageID, () => {});
   }
@@ -77,6 +79,53 @@ async function initListeners() {
   changeRoute();
   //var signOutBtn = document.getElementById("signOut");
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
+}
+
+async function initFavoritesPage() {
+  let colleges = await MODEL.getUserFavorites();
+
+  console.log(colleges);
+  console.log(colleges.length);
+  $.each(colleges, async (idx, college) => {
+    console.log("yubb");
+    console.log(college);
+
+    let collegeid = college.id;
+    let collegedata = college.data;
+    let image = await getImageFromName(collegedata.Name);
+    $(".colleges-container").append(`<div class="college-card">
+    <img src="${image}" alt="" />
+    <h3>${collegedata.Name}</h3>
+    <p>
+      Funding Model: ${collegedata.FundingModel}
+    </p>
+    <p>
+      Geography: ${collegedata.Geography}
+    </p>
+    <div class="college-card-buttons">
+      <button class="dark-button" id="remove-fav-${collegeid}">Remove from Favorites</button>
+      <a class="light-button" href="#indcollege_${collegeid}"
+        >Learn More <i class="fa-solid fa-arrow-right"></i
+      ></a>
+    </div>
+  </div>`);
+    $(`#remove-fav-${collegeid}`).on("click", async () => {
+      let success = await MODEL.removeFromFavorites(collegeid);
+      if (success) {
+        Swal.fire(
+          "Nice!",
+          `You added ${collegedata.Name} to your favorites! `,
+          "success"
+        );
+      } else {
+        Swal.fire(
+          "Oops!",
+          `You need to be signed in to add ${collegedata.Name} to your favorites! `,
+          "error"
+        );
+      }
+    });
+  });
 }
 
 async function initCompareColleges() {
@@ -128,10 +177,12 @@ async function displayCompareResults(searchResults, sideOfPage) {
   });
 }
 
-async function displayCompareColleges(college, sideOfPage) {
+async function displayCompareColleges(wholecollegedoc, sideOfPage) {
+  let college = wholecollegedoc.data();
+  let collegeid = wholecollegedoc.id;
   $(`#${sideOfPage}-name-fav`)
     .html(`<h3 id="${sideOfPage}-side-name">${college.Name}</h3>
-  <a href="#"><i class="fa-regular fa-heart"></i></a>`);
+  <button id ="fav-${collegeid}"><i class="fa-regular fa-heart"></i></button>`);
   $(`#adr-${sideOfPage}`).html(college.AdmissionRate);
   $(`#fm-${sideOfPage}`).html(college.FundingModel);
   $(`#geo-${sideOfPage}`).html(college.Geography);
@@ -141,6 +192,23 @@ async function displayCompareColleges(college, sideOfPage) {
   $(`#cost-${sideOfPage}`).html(college.AverageCost);
   $(`#sat-${sideOfPage}`).html(college.SATAverage);
   $(`#act-${sideOfPage}`).html(college.ACTMedian);
+
+  $(`#fav-${collegeid}`).on("click", async () => {
+    let success = await MODEL.addToFavorites(collegeid);
+    if (success) {
+      Swal.fire(
+        "Nice!",
+        `You added ${college.Name} to your favorites! `,
+        "success"
+      );
+    } else {
+      Swal.fire(
+        "Oops!",
+        `You need to be signed in to add ${college.Name} to your favorites! `,
+        "error"
+      );
+    }
+  });
 }
 
 async function initProfilePage() {
@@ -184,12 +252,29 @@ async function initHomeListeners() {
       Geography: ${collegedata.Geography}
     </p>
     <div class="college-card-buttons">
-      <a class="dark-button" href="#">Add to Favorites</a>
+      <button class="dark-button" id="fav-${collegeid}">Add to Favorites</button>
       <a class="light-button" href="#indcollege_${collegeid}"
         >Learn More <i class="fa-solid fa-arrow-right"></i
       ></a>
     </div>
   </div>`);
+
+    $(`#fav-${collegeid}`).on("click", async () => {
+      let success = await MODEL.addToFavorites(collegeid);
+      if (success) {
+        Swal.fire(
+          "Nice!",
+          `You added ${collegedata.Name} to your favorites! `,
+          "success"
+        );
+      } else {
+        Swal.fire(
+          "Oops!",
+          `You need to be signed in to add ${collegedata.Name} to your favorites! `,
+          "error"
+        );
+      }
+    });
   });
 }
 
@@ -238,13 +323,14 @@ function getFilterValues() {
 }
 
 async function initIndCollegePage(collegeid) {
-  let college = await MODEL.getSingleCollege(collegeid);
+  let wholecollegedoc = await MODEL.getSingleCollege(collegeid);
+  let college = wholecollegedoc.data();
   let image = await getImageFromName(college.Name);
   $(".ind-college-page").html(`
   <div class="image-name-side">
     <div class="name-button">
       <h2>${college.Name}</h2>
-      <a href="#"><i class="fa-regular fa-heart"></i></a>
+      <button id ="fav-${collegeid}"><i class="fa-regular fa-heart"></i></button>
     </div>
     <img src="${image}" alt="">
   </div>
@@ -286,6 +372,22 @@ async function initIndCollegePage(collegeid) {
       <p>${college.ACTMedian}</p>
     </div>
   </div>`);
+  $(`#fav-${collegeid}`).on("click", async () => {
+    let success = await MODEL.addToFavorites(collegeid);
+    if (success) {
+      Swal.fire(
+        "Nice!",
+        `You added ${college.Name} to your favorites! `,
+        "success"
+      );
+    } else {
+      Swal.fire(
+        "Oops!",
+        `You need to be signed in to add ${college.Name} to your favorites! `,
+        "error"
+      );
+    }
+  });
 }
 
 function initSearchListeners() {}
@@ -306,12 +408,28 @@ async function displaySearchResults(searchResults, checkboxes) {
       Geography: ${collegedata.Geography}
     </p>
     <div class="college-card-buttons">
-      <a class="dark-button" href="#">Add to Favorites</a>
+    <button id ="fav-${collegeid}"><i class="fa-regular fa-heart"></i></button>
       <a class="light-button" href="#indcollege_${collegeid}"
         >Learn More <i class="fa-solid fa-arrow-right"></i
       ></a>
     </div>
   </div>`);
+    $(`#fav-${collegeid}`).on("click", async () => {
+      let success = await MODEL.addToFavorites(collegeid);
+      if (success) {
+        Swal.fire(
+          "Nice!",
+          `You added ${collegedata.Name} to your favorites! `,
+          "success"
+        );
+      } else {
+        Swal.fire(
+          "Oops!",
+          `You need to be signed in to add ${collegedata.Name} to your favorites! `,
+          "error"
+        );
+      }
+    });
   });
 }
 function routeTo(routeloc) {
@@ -348,12 +466,28 @@ async function initSearchPage(searchTerm) {
       Geography: ${collegedata.Geography}
     </p>
     <div class="college-card-buttons">
-      <a class="dark-button" href="#">Add to Favorites</a>
+    <button id ="fav-${collegeid}"><i class="fa-regular fa-heart"></i></button>
       <a class="light-button" href="#indcollege_${collegeid}"
         >Learn More <i class="fa-solid fa-arrow-right"></i
       ></a>
     </div>
   </div>`);
+      $(`#fav-${collegeid}`).on("click", async () => {
+        let success = await MODEL.addToFavorites(collegeid);
+        if (success) {
+          Swal.fire(
+            "Nice!",
+            `You added ${collegedata.Name} to your favorites! `,
+            "success"
+          );
+        } else {
+          Swal.fire(
+            "Oops!",
+            `You need to be signed in to add ${collegedata.Name} to your favorites! `,
+            "error"
+          );
+        }
+      });
     });
   }
 }

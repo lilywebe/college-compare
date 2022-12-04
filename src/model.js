@@ -325,11 +325,47 @@ export async function getSingleCollege(collegeid) {
   if (docSnap.exists()) {
     console.log("Document data:", docSnap.data());
     console.log(docSnap);
-    return docSnap.data();
+    return docSnap;
   } else {
     // doc.data() will be undefined in this case
     console.log("No such document!");
   }
+}
+
+export async function getUserFavorites() {
+  const user = auth.currentUser;
+  if (user) {
+    console.log("is user");
+    let favoritesList = [];
+    const favoritesRef = collection(db, "favorites");
+
+    const q = query(favoritesRef, where("user", "==", user.uid));
+
+    const querySnapshot = await getDocs(q);
+    for (const doc of querySnapshot.docs) {
+      let college = await getSingleCollege(doc.data().college);
+
+      favoritesList.push({
+        id: doc.data().college,
+        data: college.data(),
+      });
+    }
+    return favoritesList;
+  }
+  return false;
+}
+
+export async function removeFromFavorites(collegeid) {
+  const user = auth.currentUser;
+  var q = db
+    .collection("favorites")
+    .where("college", "==", collegeid)
+    .where("user", "==", user.uid);
+  q.get().then(function (querySnapshot) {
+    querySnapshot.forEach(function (doc) {
+      doc.ref.delete();
+    });
+  });
 }
 
 // export async function getAllColleges() {
