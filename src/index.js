@@ -42,6 +42,8 @@ function changeRoute() {
     MODEL.currentPage(pageID, initAddCollegePage);
   } else if (pageID.includes("updatecollege_")) {
     MODEL.currentPage(pageID, initUpdateUserCollege);
+  } else if (pageID.includes("shouldnotbehere")) {
+    MODEL.currentPage(pageID, initNotLoggedIn);
   } else {
     MODEL.currentPage(pageID, () => {});
   }
@@ -49,6 +51,15 @@ function changeRoute() {
 
 function getUserInfo() {
   return MODEL.getUserInfo();
+}
+
+function initNotLoggedIn() {
+  $(".not-logged-in").html(`
+  <h2>Hmm.... I don't think you're supposed to be here yet..</h2>
+  <h3>You should log in!</h3>
+  <a id="login-button" href="#login">Login</a>
+
+  `);
 }
 
 async function addNavandFooter() {
@@ -217,14 +228,16 @@ async function initUserColleges() {
 }
 
 async function initFavoritesPage() {
-  let colleges = await MODEL.getUserFavorites();
-  $(".colleges-container").html("");
+  let user = getUserInfo();
+  if (user) {
+    let colleges = await MODEL.getUserFavorites();
+    $(".colleges-container").html("");
 
-  $.each(colleges, async (idx, college) => {
-    let collegeid = college.id;
-    let collegedata = college.data;
-    let image = await getImageFromName(collegedata.Name);
-    $(".colleges-container").append(`<div class="college-card">
+    $.each(colleges, async (idx, college) => {
+      let collegeid = college.id;
+      let collegedata = college.data;
+      let image = await getImageFromName(collegedata.Name);
+      $(".colleges-container").append(`<div class="college-card">
     <img src="${image}" alt="" />
     <h3>${collegedata.Name}</h3>
     <p>
@@ -240,23 +253,26 @@ async function initFavoritesPage() {
       ></a>
     </div>
   </div>`);
-    $(`#remove-fav-${collegeid}`).on("click", async () => {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          MODEL.removeFromFavorites(collegeid, initFavoritesPage);
-          Swal.fire("Deleted!", "Your file has been deleted.", "success");
-        }
+      $(`#remove-fav-${collegeid}`).on("click", async () => {
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            MODEL.removeFromFavorites(collegeid, initFavoritesPage);
+            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+          }
+        });
       });
     });
-  });
+  } else {
+    routeTo("shouldnotbehere");
+  }
 }
 
 async function initCompareColleges() {
@@ -352,7 +368,8 @@ async function displayCompareColleges(wholecollegedoc, sideOfPage) {
 
 async function initProfilePage() {
   let user = getUserInfo();
-  $(".account-info").append(`<div class="name">
+  if (user) {
+    $(".account-info").append(`<div class="name">
   <h3>Display Name:</h3>
   <p>${user.displayName}</p>
 </div>
@@ -362,11 +379,14 @@ async function initProfilePage() {
 </div>
   <a href="#editaccount">edit account info</a>
   `);
-  let usercolleges = await MODEL.getUserColleges();
-  $.each(usercolleges, (idx, college) => {
-    $(".profile-colleges").append(`<p>${college.data().Name}</p>`);
-  });
-  $(".profile-colleges").append(`<a href="#usercolleges">view all</a>`);
+    let usercolleges = await MODEL.getUserColleges();
+    $.each(usercolleges, (idx, college) => {
+      $(".profile-colleges").append(`<p>${college.data().Name}</p>`);
+    });
+    $(".profile-colleges").append(`<a href="#usercolleges">view all</a>`);
+  } else {
+    routeTo("shouldnotbehere");
+  }
 }
 
 async function handleHometoSearch(searchParam) {
