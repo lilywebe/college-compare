@@ -335,6 +335,11 @@ async function initProfilePage() {
 </div>
   <a href="#editaccount">edit account info</a>
   `);
+  let usercolleges = await MODEL.getUserColleges();
+  $.each(usercolleges, (idx, college) => {
+    $(".profile-colleges").append(`<p>${college.data().Name}</p>`);
+  });
+  $(".profile-colleges").append(`<a href="#usercolleges">view all</a>`);
 }
 
 async function handleHometoSearch(searchParam) {
