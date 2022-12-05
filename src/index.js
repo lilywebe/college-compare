@@ -40,6 +40,8 @@ function changeRoute() {
     MODEL.currentPage(pageID, initUserColleges);
   } else if (pageID.includes("addcollege")) {
     MODEL.currentPage(pageID, initAddCollegePage);
+  } else if (pageID.includes("updatecollege_")) {
+    MODEL.currentPage(pageID, initUpdateUserCollege);
   } else {
     MODEL.currentPage(pageID, () => {});
   }
@@ -125,14 +127,33 @@ async function initAddCollegePage() {
   });
 }
 
+async function initUpdateUserCollege(collegeid) {
+  let collegePreLoad = await MODEL.getSingleUserCollege(collegeid);
+  let collegedata = collegePreLoad.data();
+
+  $("#name").val(collegedata.Name);
+  $("#act").val(collegedata.ACTMedian);
+  $("#adm").val(collegedata.AdmissionRate);
+  $("#age").val(collegedata.AverageAgeofEntry);
+  $("#cost").val(collegedata.AverageCost);
+  $("#sal").val(collegedata.AverageFacultySalary);
+  $("#exp").val(collegedata.Expenditure);
+  $("#fm").val(collegedata.FundingModel);
+  $("#geo").val(collegedata.Geography);
+  $("#high").val(collegedata.HighestDegree);
+  $("#debt").val(collegedata.MedianDebt);
+  $("#earn").val(collegedata.MedianEarnings);
+  $("#fam").val(collegedata.MedianFamilyIncome);
+  $("#pre").val(collegedata.PredominantDegree);
+  $("#sat").val(collegedata.SATAverage);
+  $("#reg").val(collegedata.Region);
+}
+
 async function initUserColleges() {
   let colleges = await MODEL.getUserColleges();
 
   $(".colleges-container").html("");
   $.each(colleges, async (idx, college) => {
-    console.log("yubb");
-    console.log(college);
-
     let collegeid = college.id;
     let collegedata = college.data();
     let image = await getImageFromName(collegedata.Name);
@@ -147,6 +168,7 @@ async function initUserColleges() {
     </p>
     <div class="college-card-buttons">
       <button class="dark-button" id="remove-college-${collegeid}">Remove from Favorites</button>
+      <a class="light-button" href="#updatecollege_${collegeid}">Update</a>
       <a class="light-button" href="#indcollege_${collegeid}"
         >Learn More <i class="fa-solid fa-arrow-right"></i
       ></a>
@@ -163,7 +185,7 @@ async function initUserColleges() {
         confirmButtonText: "Yes, delete it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          MODEL.removeFromFavorites(collegeid, initUserColleges);
+          MODEL.removeFromUserColleges(collegeid, initUserColleges);
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
         }
       });

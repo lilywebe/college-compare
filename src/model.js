@@ -383,6 +383,20 @@ export async function getSingleCollege(collegeid) {
   }
 }
 
+export async function getSingleUserCollege(collegeid) {
+  const docRef = doc(db, "usercolleges", collegeid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    console.log("Document data:", docSnap.data());
+    console.log(docSnap);
+    return docSnap;
+  } else {
+    // doc.data() will be undefined in this case
+    console.log("No such document!");
+  }
+}
+
 export async function getUserFavorites() {
   const user = auth.currentUser;
   if (user) {
