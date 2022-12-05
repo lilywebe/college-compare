@@ -85,7 +85,45 @@ async function initListeners() {
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
 }
 
-async function initAddCollegePage() {}
+async function initAddCollegePage() {
+  let collegeObj = {};
+  $("#add-user-college").on("click", async () => {
+    collegeObj.name = $("#name").val();
+    collegeObj.act = $("#act").val();
+    collegeObj.adm = $("#adm").val();
+    collegeObj.age = $("#age").val();
+    collegeObj.cost = $("#cost").val();
+    collegeObj.sal = $("#sal").val();
+    collegeObj.exp = $("#exp").val();
+    collegeObj.fm = $("#fm").val();
+    collegeObj.geo = $("#geo").val();
+    collegeObj.high = $("#high").val();
+    collegeObj.debt = $("#debt").val();
+    collegeObj.earn = $("#earn").val();
+    collegeObj.inc = $("#fam").val();
+    collegeObj.pre = $("#pre").val();
+    collegeObj.sat = $("#sat").val();
+    collegeObj.reg = $("#reg").val();
+    if (collegeObj.name !== "" && collegeObj.fm && collegeObj.geo !== "") {
+      let success = await MODEL.addUserCollege(collegeObj);
+      if (success) {
+        Swal.fire("Nice!", `You added ${collegeObj.name}! `, "success");
+      } else {
+        Swal.fire(
+          "Oops!",
+          `You need to be signed in to add ${collegeObj.name}! `,
+          "error"
+        );
+      }
+    } else {
+      Swal.fire(
+        "Oops!",
+        `At a minimum, your college needs a name, funding model and geography.`,
+        "error"
+      );
+    }
+  });
+}
 
 async function initUserColleges() {
   let colleges = await MODEL.getUserColleges();

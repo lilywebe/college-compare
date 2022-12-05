@@ -362,6 +362,9 @@ export async function addUserCollege(collegeObj) {
       Region: collegeObj.reg,
       SATAverage: collegeObj.sat,
     });
+    return true;
+  } else {
+    return false;
   }
 }
 
