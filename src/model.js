@@ -355,6 +355,7 @@ export async function removeFromUserColleges(collegeid, callback) {
   const user = auth.currentUser;
   if (user) {
     await deleteDoc(doc(db, "usercolleges", collegeid));
+    removeFromFavorites(collegeid, () => {});
     callback();
   }
 }
@@ -428,14 +429,22 @@ export async function getUserFavorites() {
     const q = query(favoritesRef, where("user", "==", user.uid));
 
     const querySnapshot = await getDocs(q);
+    var college = "";
     for (const doc of querySnapshot.docs) {
-      let college = await getSingleCollege(doc.data().college);
+      console.log(college);
+      if (await getSingleCollege(doc.data().college)) {
+        college = await getSingleCollege(doc.data().college);
+      } else {
+        college = await getSingleUserCollege(doc.data().college);
+        console.log(college);
+      }
 
       favoritesList.push({
         id: doc.data().college,
         data: college.data(),
       });
     }
+    console.log(college);
     return favoritesList;
   }
   return false;

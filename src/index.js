@@ -167,7 +167,7 @@ async function initUserColleges() {
       Geography: ${collegedata.Geography}
     </p>
     <div class="college-card-buttons">
-      <button class="dark-button" id="remove-college-${collegeid}">Remove from Favorites</button>
+      <button class="dark-button" id="remove-college-${collegeid}">Delete</button>
       <a class="light-button" href="#updatecollege_${collegeid}">Update</a>
       <a class="light-button" href="#indcollege_${collegeid}"
         >Learn More <i class="fa-solid fa-arrow-right"></i
@@ -196,12 +196,8 @@ async function initUserColleges() {
 async function initFavoritesPage() {
   let colleges = await MODEL.getUserFavorites();
   $(".colleges-container").html("");
-  console.log(colleges);
-  console.log(colleges.length);
-  $.each(colleges, async (idx, college) => {
-    console.log("yubb");
-    console.log(college);
 
+  $.each(colleges, async (idx, college) => {
     let collegeid = college.id;
     let collegedata = college.data;
     let image = await getImageFromName(collegedata.Name);
@@ -280,11 +276,19 @@ async function displayCompareResults(searchResults, sideOfPage) {
     });
   }
   $("#left-names").on("change", async function (e) {
-    let college = await MODEL.getSingleCollege(this.value);
+    if (await MODEL.getSingleCollege(this.value)) {
+      var college = await MODEL.getSingleCollege(this.value);
+    } else {
+      var college = await MODEL.getSingleUserCollege(this.value);
+    }
     displayCompareColleges(college, "left");
   });
   $("#right-names").on("change", async function (e) {
-    let college = await MODEL.getSingleCollege(this.value);
+    if (await MODEL.getSingleCollege(this.value)) {
+      var college = await MODEL.getSingleCollege(this.value);
+    } else {
+      var college = await MODEL.getSingleUserCollege(this.value);
+    }
     displayCompareColleges(college, "right");
   });
 }
@@ -440,7 +444,13 @@ function getFilterValues() {
 }
 
 async function initIndCollegePage(collegeid) {
-  let wholecollegedoc = await MODEL.getSingleCollege(collegeid);
+  if (await MODEL.getSingleCollege(collegeid)) {
+    var wholecollegedoc = await MODEL.getSingleCollege(collegeid);
+  } else {
+    var wholecollegedoc = await MODEL.getSingleUserCollege(collegeid);
+  }
+  console.log(wholecollegedoc);
+
   let college = wholecollegedoc.data();
   let image = await getImageFromName(college.Name);
   $(".ind-college-page").html(`
