@@ -181,6 +181,37 @@ async function initUpdateUserCollege(collegeid) {
   $("#pre").val(collegedata.PredominantDegree);
   $("#sat").val(collegedata.SATAverage);
   $("#reg").val(collegedata.Region);
+
+  $("#update-user-college").on("click", async (idx, college) => {
+    let collegeObj = {
+      id: collegeid,
+      name: $("#name").val(),
+      act: $("#act").val(),
+      adm: $("#adm").val(),
+      age: $("#age").val(),
+      cost: $("#cost").val(),
+      sal: $("#sal").val(),
+      exp: $("#exp").val(),
+      fm: $("#fm").val(),
+      geo: $("#geo").val(),
+      high: $("#high").val(),
+      debt: $("#debt").val(),
+      earn: $("#earn").val(),
+      inc: $("#fam").val(),
+      pre: $("#pre").val(),
+      sat: $("#sat").val(),
+      reg: $("#reg").val(),
+    };
+    if (await MODEL.updateUserCollege(collegeObj)) {
+      Swal.fire("Nice!", `You updated ${collegeObj.name}! `, "success");
+    } else {
+      Swal.fire(
+        "Oops!",
+        `You need to be signed in to update ${collegeObj.name}! `,
+        "error"
+      );
+    }
+  });
 }
 
 async function initUserColleges() {

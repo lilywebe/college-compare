@@ -22,6 +22,7 @@ import {
   getDocs,
   getDoc,
   addDoc,
+  setDoc,
   doc,
   updateDoc,
   deleteDoc,
@@ -242,6 +243,34 @@ export async function addKeywordstoData(collegeid) {
       keywords: keywords,
     });
     return true;
+  }
+}
+
+export async function updateUserCollege(collegeObj) {
+  const user = auth.currentUser;
+  if (user) {
+    await setDoc(doc(db, "usercolleges", collegeObj.id), {
+      user: user.uid,
+      ACTMedian: collegeObj.act,
+      AdmissionRate: collegeObj.adm,
+      AverageAgeofEntry: collegeObj.age,
+      AverageCost: collegeObj.cost,
+      AverageFacultySalary: collegeObj.sal,
+      Expenditure: collegeObj.exp,
+      FundingModel: collegeObj.fm,
+      Geography: collegeObj.geo,
+      HighestDegree: collegeObj.high,
+      MedianDebt: collegeObj.debt,
+      MedianEarnings: collegeObj.earn,
+      MedianFamilyIncome: collegeObj.inc,
+      Name: collegeObj.name,
+      PredominantDegree: collegeObj.pre,
+      Region: collegeObj.reg,
+      SATAverage: collegeObj.sat,
+    });
+    return true;
+  } else {
+    return false;
   }
 }
 
