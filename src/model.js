@@ -82,19 +82,15 @@ const auth = getAuth(firebaseApp);
 
 const db = getFirestore(firebaseApp);
 const user = auth.currentUser;
+export function registerOnAuthStateChanged(callback) {
+  auth.onAuthStateChanged(callback);
+}
 
 //const students = collection(db, "Students");
 
 //const snapshot = await getDocs(students);
 
 // detect auth state
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("logged in");
-  } else {
-    console.log("No user");
-  }
-});
 
 export async function updateUserInfo(userObj, oldPass) {
   const auth = getAuth();
@@ -134,8 +130,8 @@ export function getUserInfo() {
   return auth.currentUser;
 }
 
-export function signInEmailPassword(em, pw) {
-  signInWithEmailAndPassword(auth, em, pw)
+export async function signInEmailPassword(em, pw) {
+  await signInWithEmailAndPassword(auth, em, pw)
     .then((userCredential) => {
       const user = userCredential.user;
       console.log(user);

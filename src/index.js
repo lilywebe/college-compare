@@ -2,8 +2,8 @@ import { startAfter } from "firebase/firestore";
 import * as MODEL from "./model.js";
 
 $(document).ready(function () {
-  addNav();
   initListeners();
+  MODEL.registerOnAuthStateChanged(addNavandFooter);
   //MODEL.IU();
   //getImageFromName();
   //MODEL.addKeywordstoData();
@@ -15,7 +15,7 @@ function changeRoute() {
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "");
   //   console.log(hashTag + ' ' + pageID);
-  addNav();
+
   if (pageID == "home" || pageID == "") {
     MODEL.currentPage("home", initHomeListeners);
   } else if (pageID == "login") {
@@ -50,7 +50,8 @@ function changeRoute() {
 function getUserInfo() {
   return MODEL.getUserInfo();
 }
-async function addNav() {
+
+async function addNavandFooter() {
   let user = getUserInfo();
 
   if (user) {
@@ -64,6 +65,19 @@ async function addNav() {
     <a href="#profile">My Profile</a>
     <a id="logout-button" href="#logout">Logout</a>
   </div>`);
+    $("footer").html(
+      `<div class="footer-container">
+        <div class="logo">
+          <a href="#home"> <img src="assets/logo.png" alt="" /></a>
+        </div>
+        <div class="links">
+          <a href="#allcolleges">Search Colleges</a>
+          <a href="#comparecolleges">Compare Colleges</a>
+          <a href="#favorites">My Colleges</a>
+          <a href="#profile">My Profile</a>
+        </div>
+      </div>`
+    );
   } else {
     $("nav").html(` 
     <div class="logo">
@@ -72,11 +86,20 @@ async function addNav() {
     <div class="links">
       <a href="#allcolleges">Search Colleges</a>
       <a href="#comparecolleges">Compare Colleges</a>
-      <a href="#favorites">My Colleges</a>
-      <a href="#profile">My Profile</a>
+      
       <a id="login-button" href="#login">Login</a>
     </div>
   `);
+    $("footer").html(`<div class="footer-container">
+        <div class="logo">
+          <a href="#home"> <img src="assets/logo.png" alt="" /></a>
+        </div>
+        <div class="links">
+          <a href="#allcolleges">Search Colleges</a>
+          <a href="#comparecolleges">Compare Colleges</a>
+          
+        </div>
+      </div>`);
   }
 }
 
@@ -359,6 +382,7 @@ async function initHomeListeners() {
     handleHometoSearch(searchParam);
   });
   let homecolleges = await MODEL.getPreSearchColleges();
+
   $.each(homecolleges, async (idx, college) => {
     let collegeid = college.collegeid;
     let collegedata = college.collegedata;
