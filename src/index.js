@@ -127,13 +127,14 @@ async function initAddCollegePage() {
 
 async function initUserColleges() {
   let colleges = await MODEL.getUserColleges();
+
   $(".colleges-container").html("");
   $.each(colleges, async (idx, college) => {
     console.log("yubb");
     console.log(college);
 
     let collegeid = college.id;
-    let collegedata = college.data;
+    let collegedata = college.data();
     let image = await getImageFromName(collegedata.Name);
     $(".colleges-container").append(`<div class="college-card">
     <img src="${image}" alt="" />
