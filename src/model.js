@@ -219,34 +219,35 @@ export function signOutBtnFunction() {
     });
 }
 
-// export function generateKeywords(name) {
-//   let keywords = new Set();
-//   for (let begin = 0; begin < name.length; begin++) {
-//     for (let end = begin + 1; end < name.length; end++) {
-//       keywords.add(name.substring(begin, end));
-//     }
-//   }
-//   console.log(keywords);
-//   return [...keywords];
-// }
+export function generateKeywords(name) {
+  let keywords = new Set();
+  for (let begin = 0; begin < name.length; begin++) {
+    for (let end = begin + 1; end < name.length; end++) {
+      keywords.add(name.substring(begin, end));
+    }
+  }
+  keywords.add(name);
+  console.log(keywords);
+  return [...keywords];
+}
 
-// //needs rethought and should not be run until we are certain we have it correct
-// export async function addKeywordstoData() {
-//   const querySnapshot = await getDocs(collection(db, "colleges"));
-//   querySnapshot.forEach((collegedoc) => {
-//     // doc.data() is never undefined for query doc snapshots
-//     console.log(collegedoc.id, " => ", collegedoc.data());
-//     const data = collegedoc.data();
-//     const name = data.Name;
-//     console.log(name);
-//     let keywords = generateKeywords(name);
-//     const collegeRef = doc(db, "colleges", collegedoc.id);
+//needs rethought and should not be run until we are certain we have it correct
+export async function addKeywordstoData(collegeid) {
+  const docRef = doc(db, "usercolleges", collegeid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    const name = data.Name;
+    console.log(name);
+    let keywords = generateKeywords(name);
+    const collegeRef = doc(db, "usercolleges", collegeid);
 
-//     updateDoc(collegeRef, {
-//       keywords: keywords,
-//     });
-//   });
-// }
+    await updateDoc(collegeRef, {
+      keywords: keywords,
+    });
+    return true;
+  }
+}
 
 export async function searchColleges(search, checkboxes, callback) {
   console.log("made it to search");
@@ -257,10 +258,28 @@ export async function searchColleges(search, checkboxes, callback) {
     where("keywords", "array-contains", search),
     limit(50)
   );
+  const userCollegesRef = collection(db, "usercolleges");
+  const uq = query(
+    userCollegesRef,
+    where("keywords", "array-contains", search),
+    limit(50)
+  );
 
-  const querySnapshot = await getDocs(q);
+  const isCollege = getDocs(q);
+  const isUserCollege = getDocs(uq);
+
+  const [collegeQuerySnapshot, userQuerySnapshot] = await Promise.all([
+    isCollege,
+    isUserCollege,
+  ]);
+
+  const collegesArray = collegeQuerySnapshot.docs;
+  const userArray = userQuerySnapshot.docs;
+
+  const allCollegesArray = collegesArray.concat(userArray);
+  console.log(allCollegesArray);
   if (checkboxes && checkboxes !== "left" && checkboxes !== "right") {
-    querySnapshot.forEach((doc) => {
+    allCollegesArray.forEach((doc) => {
       if (checkboxes.funding.includes(doc.data().FundingModel)) {
         if (checkboxes.degree.includes(doc.data().HighestDegree)) {
           let costlevel = "";
@@ -295,7 +314,7 @@ export async function searchColleges(search, checkboxes, callback) {
       }
     });
   } else {
-    querySnapshot.forEach((doc) => {
+    allCollegesArray.forEach((doc) => {
       searchResultsList.push(doc);
     });
   }
@@ -362,6 +381,7 @@ export async function addUserCollege(collegeObj) {
       Region: collegeObj.reg,
       SATAverage: collegeObj.sat,
     });
+    await addKeywordstoData(docRef.id);
     return true;
   } else {
     return false;
