@@ -36,6 +36,10 @@ function changeRoute() {
     MODEL.currentPage(pageID, initCompareColleges);
   } else if (pageID.includes("favorites")) {
     MODEL.currentPage(pageID, initFavoritesPage);
+  } else if (pageID.includes("usercolleges")) {
+    MODEL.currentPage(pageID, initUserColleges);
+  } else if (pageID.includes("addcollege")) {
+    MODEL.currentPage(pageID, initAddCollegePage);
   } else {
     MODEL.currentPage(pageID, () => {});
   }
@@ -79,6 +83,53 @@ async function initListeners() {
   changeRoute();
   //var signOutBtn = document.getElementById("signOut");
   //signOutBtn.addEventListener("click", MODEL.signOutBtnFunction);
+}
+
+async function initAddCollegePage() {}
+
+async function initUserColleges() {
+  let colleges = await MODEL.getUserColleges();
+  $(".colleges-container").html("");
+  $.each(colleges, async (idx, college) => {
+    console.log("yubb");
+    console.log(college);
+
+    let collegeid = college.id;
+    let collegedata = college.data;
+    let image = await getImageFromName(collegedata.Name);
+    $(".colleges-container").append(`<div class="college-card">
+    <img src="${image}" alt="" />
+    <h3>${collegedata.Name}</h3>
+    <p>
+      Funding Model: ${collegedata.FundingModel}
+    </p>
+    <p>
+      Geography: ${collegedata.Geography}
+    </p>
+    <div class="college-card-buttons">
+      <button class="dark-button" id="remove-college-${collegeid}">Remove from Favorites</button>
+      <a class="light-button" href="#indcollege_${collegeid}"
+        >Learn More <i class="fa-solid fa-arrow-right"></i
+      ></a>
+    </div>
+  </div>`);
+    $(`#remove-college-${collegeid}`).on("click", async () => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          MODEL.removeFromFavorites(collegeid, initUserColleges);
+          Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        }
+      });
+    });
+  });
 }
 
 async function initFavoritesPage() {

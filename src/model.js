@@ -317,6 +317,54 @@ export async function addToFavorites(collegeid) {
   }
 }
 
+export async function getUserColleges() {
+  const user = auth.currentUser;
+  if (user) {
+    let usercolleges = [];
+    const userCollegesRef = collection(db, "usercolleges");
+
+    const q = query(userCollegesRef, where("user", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      usercolleges.push(doc);
+    });
+    return usercolleges;
+  }
+}
+
+export async function removeFromUserColleges(collegeid, callback) {
+  const user = auth.currentUser;
+  if (user) {
+    await deleteDoc(doc(db, "usercolleges", collegeid));
+    callback();
+  }
+}
+
+export async function addUserCollege(collegeObj) {
+  const user = auth.currentUser;
+  if (user) {
+    const docRef = await addDoc(collection(db, "usercolleges"), {
+      user: user.uid,
+      ACTMedian: collegeObj.act,
+      AdmissionRate: collegeObj.adm,
+      AverageAgeofEntry: collegeObj.age,
+      AverageCost: collegeObj.cost,
+      AverageFacultySalary: collegeObj.sal,
+      Expenditure: collegeObj.exp,
+      FundingModel: collegeObj.fm,
+      Geography: collegeObj.geo,
+      HighestDegree: collegeObj.high,
+      MedianDebt: collegeObj.debt,
+      MedianEarnings: collegeObj.earn,
+      MedianFamilyIncome: collegeObj.inc,
+      Name: collegeObj.name,
+      PredominantDegree: collegeObj.pre,
+      Region: collegeObj.reg,
+      SATAverage: collegeObj.sat,
+    });
+  }
+}
+
 export async function getSingleCollege(collegeid) {
   console.log(collegeid);
   const docRef = doc(db, "colleges", collegeid);
