@@ -398,6 +398,7 @@ export async function getSingleCollege(collegeid) {
     console.log(docSnap);
     return docSnap;
   } else {
+    return null;
     // doc.data() will be undefined in this case
     console.log("No such document!");
   }
