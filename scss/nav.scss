@@ -6,17 +6,20 @@ nav{
     justify-content: space-between;
 
     .logo{
+        padding-right:30px;
         img{
             height:100px;
         }
     }
 
     .links{
+       
         a{
             text-decoration: none;
             color:#900C3F;
             margin-right:20px;
             font-size: 20px;
+            margin-bottom:20px;
 
             
         }
@@ -25,6 +28,7 @@ nav{
 }
 
 #login-button, #logout-button{
+    margin-top:10px;
     width:200px;
     padding:5px;
     height:45px;

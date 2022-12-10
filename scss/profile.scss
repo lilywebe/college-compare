@@ -1,16 +1,54 @@
 .profile{
-    width:80%;
+    max-width:80%;
     //min-height:20%;
     margin:0 auto;
+
+    #name-greeting{
+        text-align: center;
+        font-size: 34px;
+        margin-bottom:50px;
+    }
     .profile-sections{
     
-  padding-bottom:100px;
+    padding-bottom:100px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-evenly;
+    flex-wrap: wrap;
+    h2{
+        font-size: 24px;
+    }
+    
+    .account-info, .profile-colleges{
+        min-width: 200px;
+      
+        margin-bottom:100px;
+        
+        
+        
+        div{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+          
+            
+        }
+        
+       
+        
+    }
+    .account-info{
+        p{
+            padding-left: 20px;
+        }
+    }
 
     h3{
-        font-size:34px;
+        font-size:20px;
+        
+    }
+    p{
+        font-size:16px;
         
     }
 

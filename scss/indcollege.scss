@@ -1,0 +1,50 @@
+.ind-college-page{
+    width:80%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 0 auto;
+
+    .college-info-side{
+        padding-top:45px;
+        div{
+            width:500px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+        }
+    }
+    
+.image-name-side{
+    width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap:wrap;
+    img{
+        width:400px;
+        height:230px;
+    }
+    .name-button{
+        width:400px;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+
+        button{
+            padding-left:20px;
+            background-color: white;
+            border-style:none;
+    
+            i{
+                font-size:20px;
+                padding-bottom:10px;
+            }
+        }
+        
+    }
+    
+}
+}

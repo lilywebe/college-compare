@@ -81,6 +81,7 @@ button[type="submit"] {
     display: flex;
     align-items: flex-start;
     justify-content: space-evenly;
+    
 
     .filter-section{
         margin-top:25px;
@@ -94,9 +95,18 @@ button[type="submit"] {
         align-items: center;
         justify-content: space-evenly;
         flex-wrap: wrap;
-        width:900px;
+        max-width:900px;
         .college-card{
-            width:40%;
+            min-width:40%;
+            button{
+                background-color: white;
+                border-style:none;
+        
+                i{
+                    font-size:20px;
+                    padding-bottom:40px;
+                }
+            }
         }
     }
 }

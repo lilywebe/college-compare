@@ -25,6 +25,9 @@ nav {
   align-items: center;
   justify-content: space-between;
 }
+nav .logo {
+  padding-right: 30px;
+}
 nav .logo img {
   height: 100px;
 }
@@ -33,9 +36,11 @@ nav .links a {
   color: #900C3F;
   margin-right: 20px;
   font-size: 20px;
+  margin-bottom: 20px;
 }
 
 #login-button, #logout-button {
+  margin-top: 10px;
   width: 200px;
   padding: 5px;
   height: 45px;
@@ -53,6 +58,9 @@ footer .footer-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+footer .footer-container .logo {
+  padding-right: 30px;
 }
 footer .footer-container .logo img {
   height: 100px;
@@ -98,17 +106,41 @@ footer .footer-container .links a {
 }
 
 .profile {
-  width: 80%;
+  max-width: 80%;
   margin: 0 auto;
+}
+.profile #name-greeting {
+  text-align: center;
+  font-size: 34px;
+  margin-bottom: 50px;
 }
 .profile .profile-sections {
   padding-bottom: 100px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.profile .profile-sections h2 {
+  font-size: 24px;
+}
+.profile .profile-sections .account-info, .profile .profile-sections .profile-colleges {
+  min-width: 200px;
+  margin-bottom: 100px;
+}
+.profile .profile-sections .account-info div, .profile .profile-sections .profile-colleges div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.profile .profile-sections .account-info p {
+  padding-left: 20px;
 }
 .profile .profile-sections h3 {
-  font-size: 34px;
+  font-size: 20px;
+}
+.profile .profile-sections p {
+  font-size: 16px;
 }
 .profile .profile-sections button {
   width: 150px;
@@ -205,10 +237,18 @@ form button[type=submit]:focus {
   align-items: center;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  width: 900px;
+  max-width: 900px;
 }
 .search-results-container .colleges-container .college-card {
-  width: 40%;
+  min-width: 40%;
+}
+.search-results-container .colleges-container .college-card button {
+  background-color: white;
+  border-style: none;
+}
+.search-results-container .colleges-container .college-card button i {
+  font-size: 20px;
+  padding-bottom: 40px;
 }
 
 .colleges-container {
@@ -233,7 +273,7 @@ form button[type=submit]:focus {
 
 .dark-button {
   width: 126px;
-  height: 30px;
+  min-height: 30px;
   text-decoration: none;
   color: white;
   background-color: black;
@@ -302,6 +342,164 @@ form button[type=submit]:focus {
 .compare-colleges-page h1 {
   text-align: center;
   margin-bottom: 100px;
+}
+
+.college-compare-info button {
+  background-color: white;
+  border-style: none;
+}
+.college-compare-info button i {
+  font-size: 20px;
+  padding-bottom: 40px;
+}
+
+.ind-college-page {
+  width: 80%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin: 0 auto;
+}
+.ind-college-page .college-info-side {
+  padding-top: 45px;
+}
+.ind-college-page .college-info-side div {
+  width: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ind-college-page .image-name-side {
+  width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.ind-college-page .image-name-side img {
+  width: 400px;
+  height: 230px;
+}
+.ind-college-page .image-name-side .name-button {
+  width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.ind-college-page .image-name-side .name-button button {
+  padding-left: 20px;
+  background-color: white;
+  border-style: none;
+}
+.ind-college-page .image-name-side .name-button button i {
+  font-size: 20px;
+  padding-bottom: 10px;
+}
+
+.favorites-header {
+  width: 500px;
+  margin: 0 auto;
+  margin-bottom: 100px;
+  text-align: center;
+}
+.favorites-header h2 {
+  text-align: center;
+  font-size: 34px;
+}
+.favorites-header a {
+  text-align: center;
+  border: 2px solid black;
+  color: black;
+  width: 150px;
+  height: 45px;
+  text-decoration: none;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.add-college-page, .update-college-page {
+  width: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.add-college-page #header, .update-college-page #header {
+  font-size: 34px;
+  width: 40%;
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 100px;
+}
+.add-college-page button, .update-college-page button {
+  width: 126px;
+  min-height: 30px;
+  text-decoration: none;
+  color: white;
+  background-color: black;
+  padding: 5px;
+  margin-top: 50px;
+}
+.add-college-page div, .update-college-page div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.add-college-page div input, .update-college-page div input {
+  width: 50%;
+  height: 30px;
+  padding-left: 5px;
+}
+.add-college-page div select, .update-college-page div select {
+  width: 50%;
+  height: 30px;
+  padding-left: 5px;
+}
+
+.logout-page {
+  width: 80%;
+  height: 300px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 100px;
+}
+.logout-page h2 {
+  text-align: center;
+}
+
+.not-logged-in {
+  width: 50%;
+  height: 300px;
+  padding-top: 100px;
+  margin: 0 auto;
+  text-align: center;
+}
+.not-logged-in a {
+  width: 126px;
+  min-height: 30px;
+  text-decoration: none;
+  color: white;
+  background-color: black;
+  padding: 5px;
+  margin-top: 50px;
+}
+
+.edit-account-page {
+  width: 50%;
+  margin: 0 auto;
+}
+.edit-account-page input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding-left: 5px;
+  height: 30px;
 }
 
 /*# sourceMappingURL=styles.css.map */

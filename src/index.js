@@ -144,6 +144,7 @@ async function initAddCollegePage() {
       let success = await MODEL.addUserCollege(collegeObj);
       if (success) {
         Swal.fire("Nice!", `You added ${collegeObj.name}! `, "success");
+        routeTo("usercolleges");
       } else {
         Swal.fire(
           "Oops!",
@@ -204,6 +205,7 @@ async function initUpdateUserCollege(collegeid) {
     };
     if (await MODEL.updateUserCollege(collegeObj)) {
       Swal.fire("Nice!", `You updated ${collegeObj.name}! `, "success");
+      routeTo("usercolleges");
     } else {
       Swal.fire(
         "Oops!",
@@ -251,7 +253,7 @@ async function initUserColleges() {
       }).then((result) => {
         if (result.isConfirmed) {
           MODEL.removeFromUserColleges(collegeid, initUserColleges);
-          Swal.fire("Deleted!", "Your file has been deleted.", "success");
+          Swal.fire("Deleted!", "Your college has been deleted.", "success");
         }
       });
     });
@@ -287,16 +289,20 @@ async function initFavoritesPage() {
       $(`#remove-fav-${collegeid}`).on("click", async () => {
         Swal.fire({
           title: "Are you sure?",
-          text: "You won't be able to revert this!",
+
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
+          confirmButtonText: "Yes, remove from favorites!",
         }).then((result) => {
           if (result.isConfirmed) {
             MODEL.removeFromFavorites(collegeid, initFavoritesPage);
-            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            Swal.fire(
+              "Deleted!",
+              `${collegedata.Name} has been removed from your favorites list.`,
+              "success"
+            );
           }
         });
       });
@@ -366,26 +372,33 @@ async function displayCompareResults(searchResults, sideOfPage) {
 async function displayCompareColleges(wholecollegedoc, sideOfPage) {
   let college = wholecollegedoc.data();
   let collegeid = wholecollegedoc.id;
+  let admissionrate = college.AdmissionRate * 100;
   $(`#${sideOfPage}-name-fav`)
     .html(`<h3 id="${sideOfPage}-side-name">${college.Name}</h3>
   <button id ="fav-${collegeid}"><i class="fa-regular fa-heart"></i></button>`);
-  $(`#adr-${sideOfPage}`).html(college.AdmissionRate);
+  $(`#adr-${sideOfPage}`).html(`${admissionrate.toFixed(2)}%`);
   $(`#fm-${sideOfPage}`).html(college.FundingModel);
   $(`#geo-${sideOfPage}`).html(college.Geography);
   $(`#reg-${sideOfPage}`).html(college.Region);
   $(`#pre-${sideOfPage}`).html(college.PredominantDegree);
   $(`#high-${sideOfPage}`).html(college.HighestDegree);
-  $(`#cost-${sideOfPage}`).html(college.AverageCost);
+  $(`#cost-${sideOfPage}`).html(`$${college.AverageCost}`);
   $(`#sat-${sideOfPage}`).html(college.SATAverage);
   $(`#act-${sideOfPage}`).html(college.ACTMedian);
 
   $(`#fav-${collegeid}`).on("click", async () => {
     let success = await MODEL.addToFavorites(collegeid);
-    if (success) {
+    if (success == true) {
       Swal.fire(
         "Nice!",
         `You added ${college.Name} to your favorites! `,
         "success"
+      );
+    } else if (success == "already added") {
+      Swal.fire(
+        "Oops!",
+        `You already added ${collegedata.Name} to your favorites! `,
+        "error"
       );
     } else {
       Swal.fire(
@@ -400,21 +413,24 @@ async function displayCompareColleges(wholecollegedoc, sideOfPage) {
 async function initProfilePage() {
   let user = getUserInfo();
   if (user) {
+    $("#name-greeting").html(`hey ${user.displayName}!`);
     $(".account-info").append(`<div class="name">
-  <h3>Display Name:</h3>
+  <h3>display name:</h3>
   <p>${user.displayName}</p>
 </div>
 <div class="Email">
-  <h3>Email</h3>
+  <h3>email :</h3>
   <p>${user.email}</p>
 </div>
-  <a href="#editaccount">edit account info</a>
+  <a class="dark-button" href="#editaccount">edit account info</a>
   `);
     let usercolleges = await MODEL.getUserColleges();
     $.each(usercolleges, (idx, college) => {
       $(".profile-colleges").append(`<p>${college.data().Name}</p>`);
     });
-    $(".profile-colleges").append(`<a href="#usercolleges">view all</a>`);
+    $(".profile-colleges").append(
+      `<a class="dark-button" href="#usercolleges">view all</a>`
+    );
   } else {
     routeTo("shouldnotbehere");
   }
@@ -457,11 +473,17 @@ async function initHomeListeners() {
 
     $(`#fav-${collegeid}`).on("click", async () => {
       let success = await MODEL.addToFavorites(collegeid);
-      if (success) {
+      if (success == true) {
         Swal.fire(
           "Nice!",
           `You added ${collegedata.Name} to your favorites! `,
           "success"
+        );
+      } else if (success == "already added") {
+        Swal.fire(
+          "Oops!",
+          `You already added ${collegedata.Name} to your favorites! `,
+          "error"
         );
       } else {
         Swal.fire(
@@ -527,6 +549,7 @@ async function initIndCollegePage(collegeid) {
   console.log(wholecollegedoc);
 
   let college = wholecollegedoc.data();
+  let admissionrate = college.AdmissionRate * 100;
   let image = await getImageFromName(college.Name);
   $(".ind-college-page").html(`
   <div class="image-name-side">
@@ -539,7 +562,7 @@ async function initIndCollegePage(collegeid) {
   <div class="college-info-side">
     <div class="admission">
       <h3>Admission Rate:</h3>
-      <p>${college.AdmissionRate}</p>
+      <p>${admissionrate.toFixed(2)}%</p>
     </div>
     <div class="funding">
       <h3>Funding Model:</h3>
@@ -563,7 +586,7 @@ async function initIndCollegePage(collegeid) {
     </div>
     <div class="avgcost">
       <h3>Average Cost:</h3>
-      <p>${college.AverageCost}</p>
+      <p>$${college.AverageCost}</p>
     </div>
     <div class="avgsat">
       <h3>Average SAT:</h3>
@@ -576,11 +599,17 @@ async function initIndCollegePage(collegeid) {
   </div>`);
   $(`#fav-${collegeid}`).on("click", async () => {
     let success = await MODEL.addToFavorites(collegeid);
-    if (success) {
+    if (success == true) {
       Swal.fire(
         "Nice!",
         `You added ${college.Name} to your favorites! `,
         "success"
+      );
+    } else if (success == "already added") {
+      Swal.fire(
+        "Oops!",
+        `You already added ${college.Name} to your favorites! `,
+        "error"
       );
     } else {
       Swal.fire(
@@ -618,11 +647,17 @@ async function displaySearchResults(searchResults, checkboxes) {
   </div>`);
     $(`#fav-${collegeid}`).on("click", async () => {
       let success = await MODEL.addToFavorites(collegeid);
-      if (success) {
+      if (success == true) {
         Swal.fire(
           "Nice!",
           `You added ${collegedata.Name} to your favorites! `,
           "success"
+        );
+      } else if (success == "already added") {
+        Swal.fire(
+          "Oops!",
+          `You already added ${collegedata.Name} to your favorites! `,
+          "error"
         );
       } else {
         Swal.fire(
@@ -676,11 +711,17 @@ async function initSearchPage(searchTerm) {
   </div>`);
       $(`#fav-${collegeid}`).on("click", async () => {
         let success = await MODEL.addToFavorites(collegeid);
-        if (success) {
+        if (success == true) {
           Swal.fire(
             "Nice!",
             `You added ${collegedata.Name} to your favorites! `,
             "success"
+          );
+        } else if (success == "already added") {
+          Swal.fire(
+            "Oops!",
+            `You already added ${collegedata.Name} to your favorites! `,
+            "error"
           );
         } else {
           Swal.fire(
@@ -721,7 +762,7 @@ async function initEditAccount() {
       .append(`<input id="s-name" type="text" value="${currentuser.displayName}" />
   <input id="s-email" type="text" value="${currentuser.email}" />
   <input id="s-pass" type="password" value="${password}" />
-  <button id="saveedits">apply changes</button>`);
+  <button class="dark-button" id="saveedits">apply changes</button>`);
 
     $("#saveedits").on("click", async () => {
       userObj.name = $("#s-name").val();

@@ -351,11 +351,24 @@ export async function searchColleges(search, checkboxes, callback) {
 export async function addToFavorites(collegeid) {
   const user = auth.currentUser;
   if (user) {
-    const docRef = await addDoc(collection(db, "favorites"), {
-      user: user.uid,
-      college: collegeid,
-    });
-    return true;
+    const favoritesRef = collection(db, "favorites");
+
+    const q = query(
+      favoritesRef,
+      where("user", "==", user.uid),
+      where("college", "==", collegeid)
+    );
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      const docRef = await addDoc(collection(db, "favorites"), {
+        user: user.uid,
+        college: collegeid,
+      });
+      return true;
+    } else {
+      return "already added";
+    }
   } else {
     return false;
   }
