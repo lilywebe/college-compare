@@ -136,9 +136,11 @@ export async function signInEmailPassword(em, pw) {
     .then((userCredential) => {
       const user = userCredential.user;
       console.log(user);
+      return true;
     })
     .catch((error) => {
       console.log(error.message);
+      return "error";
     });
 }
 
@@ -194,6 +196,7 @@ export async function registerEP(userObj) {
     })
     .catch((error) => {
       console.log(error.message);
+      return "error";
     });
   await updateProfile(auth.currentUser, {
     displayName: userObj.name,
@@ -201,9 +204,11 @@ export async function registerEP(userObj) {
     .then(() => {
       const user = auth.currentUser;
       console.log(user);
+      return true;
     })
     .catch((error) => {
       console.log(error.message);
+      return "error";
     });
 }
 export function signOutBtnFunction() {

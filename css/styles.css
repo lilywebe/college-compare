@@ -412,11 +412,13 @@ form button[type=submit]:focus {
 .favorites-header h2 {
   text-align: center;
   font-size: 34px;
+  margin-bottom: 40px;
 }
 .favorites-header a {
   text-align: center;
-  border: 2px solid black;
-  color: black;
+  border: 2px solid #152238;
+  border-radius: 10px;
+  color: #152238;
   width: 150px;
   height: 45px;
   text-decoration: none;

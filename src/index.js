@@ -292,8 +292,8 @@ async function initFavoritesPage() {
 
           icon: "warning",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
+          confirmButtonColor: "#900C3F",
+          cancelButtonColor: "#152238",
           confirmButtonText: "Yes, remove from favorites!",
         }).then((result) => {
           if (result.isConfirmed) {
@@ -805,7 +805,11 @@ async function registerUser() {
     email: em,
     password: pw,
   };
-  await MODEL.registerEP(user);
+  let success = await MODEL.registerEP(user);
+  if (success == "error") {
+    Swal.fire("Oops!", `Something went wrong`, "error");
+  }
+
   document.getElementById("s-email").value = "";
   document.getElementById("s-pass").value = "";
 }
@@ -813,7 +817,10 @@ async function registerUser() {
 async function signInUser() {
   let em = document.getElementById("l-email").value;
   let pw = document.getElementById("l-pass").value;
-  await MODEL.signInEmailPassword(em, pw);
+  let success = await MODEL.signInEmailPassword(em, pw);
+  if (success == "error") {
+    Swal.fire("Oops!", `Something went wrong`, "error");
+  }
   document.getElementById("l-email").value = "";
   document.getElementById("l-pass").value = "";
 }
