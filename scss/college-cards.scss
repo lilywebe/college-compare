@@ -23,13 +23,15 @@
 }
 
 .dark-button{
-    width:126px;
+    min-width:126px;
     min-height:30px;
     text-decoration: none;
     color:white;
-    background-color: black;
-    padding:5px;
+    background-color: #152238;
+    padding:10px;
     margin-right:10px;
+    border-radius: 10px;
+    border-style: none;
 }
 .light-button{
     width:126px;
