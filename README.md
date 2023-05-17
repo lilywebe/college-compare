@@ -1,4 +1,6 @@
 # college-compare
+
+Formerly hosted by IUPUI: 
  https://in-info-web4.informatics.iupui.edu/~lilywebe/college-compare/
  
  
